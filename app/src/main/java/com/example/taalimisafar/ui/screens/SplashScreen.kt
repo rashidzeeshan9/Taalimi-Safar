@@ -40,7 +40,7 @@ fun SplashScreen(navController: NavController) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(200.dp)
-                .clip(CircleShape) // Round Logo
+                .clip(CircleShape)
         )
     }
 }

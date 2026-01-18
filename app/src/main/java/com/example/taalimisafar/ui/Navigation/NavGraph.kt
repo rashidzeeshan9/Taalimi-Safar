@@ -1,4 +1,4 @@
-package com.example.taalimisafar.ui.navigation
+package com.example.taalimisafar.ui.Navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
