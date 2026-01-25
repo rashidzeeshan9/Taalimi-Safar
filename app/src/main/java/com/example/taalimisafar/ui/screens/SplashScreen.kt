@@ -1,45 +1,37 @@
 package com.example.taalimisafar.ui.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.taalimisafar.R
-import kotlinx.coroutines.delay
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.taalimisafar.utils.LanguageManager
+import com.example.taalimisafar.viewmodel.QuoteViewModel
 
 @Composable
-fun SplashScreen(navController: NavController) {
-    LaunchedEffect(key1 = true) {
-        delay(2000) // 3 seconds delay
-        navController.navigate("quote_screen") {
-            popUpTo("splash") { inclusive = true }
+fun SplashScreen(
+    onNavigateToHome: () -> Unit,
+    viewModel: QuoteViewModel = viewModel()
+) {
+    val context = LocalContext.current
+    val quoteData by viewModel.quoteState.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+        if (quoteData == null) {
+
+            CircularProgressIndicator()
+        } else {
+            QuoteScreen(
+                quote = quoteData!!,
+                onLanguageSelected = { language ->
+                    LanguageManager.saveLanguage(context, language)
+                    onNavigateToHome()
+                }
+            )
         }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF121212)), // Dark Background
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Taalimi Safar Logo",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-        )
     }
 }

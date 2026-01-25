@@ -53,8 +53,12 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.navigation.compose.v280)
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-
+    implementation(libs.ads.mobile.sdk)
     testImplementation(libs.junit)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

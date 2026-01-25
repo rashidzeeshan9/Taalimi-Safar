@@ -5,7 +5,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.taalimisafar.ui.screens.MainScreen
-import com.example.taalimisafar.ui.screens.QuoteScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
 
 @Composable
@@ -16,16 +15,12 @@ fun NavGraph(
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "splash") {
-
         composable("splash") {
-            SplashScreen(navController = navController)
-        }
-
-        composable("quote_screen") {
-            QuoteScreen(
-                onTimeout = {
+            SplashScreen(
+                onNavigateToHome = {
+                    // When user clicks a language button, go to Main Screen
                     navController.navigate("main") {
-                        popUpTo("quote_screen") { inclusive = true }
+                        popUpTo("splash") { inclusive = true } // Remove Splash from back button history
                     }
                 }
             )
@@ -38,5 +33,7 @@ fun NavGraph(
                 onThemeToggle = onThemeToggle
             )
         }
+
+
     }
 }
