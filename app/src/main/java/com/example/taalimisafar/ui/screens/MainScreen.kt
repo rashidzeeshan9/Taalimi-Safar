@@ -1,41 +1,30 @@
 package com.example.taalimisafar.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.vector.ImageVector
-
-/* -------------------- DATA MODEL -------------------- */
-
-data class Course(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val eligibility: String,
-    val duration: String,
-    val averageFees: String,
-    val futureScope: String
-)
-
-/* -------------------- SAMPLE DATA -------------------- */
-
-val sampleCourse = Course(
-    id = 1,
-    title = "Bachelor of Computer Applications (BCA)",
-    description = "BCA is a 3-year undergraduate program focusing on computer applications and software development.",
-    eligibility = "10+2 with Mathematics as a subject.",
-    duration = "3 Years",
-    averageFees = "₹50,000 – ₹1,50,000 per year",
-    futureScope = "Software Developer, Data Analyst, MCA, Government Jobs"
-)
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+// IMPORTS
+import com.example.taalimisafar.ui.courses.CourseListScreen
+// Make sure HomeScreen is imported (if it's in the same package, it might not need an import line, but check)
+// import com.example.taalimisafar.ui.screens.HomeScreen
 
 /* -------------------- BOTTOM NAV -------------------- */
 
@@ -96,7 +85,9 @@ fun MainScreen(
             startDestination = BottomNavItem.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            // 1. HOME TAB (UPDATED!)
             composable(BottomNavItem.Home.route) {
+                // We call the real HomeScreen here now
                 HomeScreen(
                     navController = rootNavController,
                     isDarkTheme = isDarkTheme,
@@ -104,19 +95,22 @@ fun MainScreen(
                 )
             }
 
+            // 2. COLLEGES TAB
             composable(BottomNavItem.Colleges.route) {
                 PlaceholderScreen("Colleges & Search")
             }
 
+            // 3. EXAMS TAB
             composable(BottomNavItem.Exam.route) {
                 PlaceholderScreen("Upcoming Exam")
             }
 
-            // 🔥 COURSE TAB WIRED HERE
+            // 4. COURSE TAB
             composable(BottomNavItem.Course.route) {
-                CourseScreen(course = sampleCourse)
+                CourseListScreen()
             }
 
+            // 5. PROFILE TAB
             composable(BottomNavItem.Profile.route) {
                 PlaceholderScreen("User Profile")
             }
@@ -124,122 +118,7 @@ fun MainScreen(
     }
 }
 
-/* -------------------- COURSE TABS -------------------- */
-
-sealed class CourseDetailTab(val route: String, val label: String) {
-    object Overview : CourseDetailTab("overview", "Overview")
-    object Eligibility : CourseDetailTab("eligibility", "Eligibility")
-    object Duration : CourseDetailTab("duration", "Duration")
-    object Fees : CourseDetailTab("fees", "Fees")
-    object FutureScope : CourseDetailTab("future_scope", "Future Scope")
-}
-
-/* -------------------- COURSE SCREEN -------------------- */
-
-@Composable
-fun CourseScreen(course: Course) {
-    val courseNavController = rememberNavController()
-
-    val tabs = listOf(
-        CourseDetailTab.Overview,
-        CourseDetailTab.Eligibility,
-        CourseDetailTab.Duration,
-        CourseDetailTab.Fees,
-        CourseDetailTab.FutureScope
-    )
-
-    val navBackStackEntry by courseNavController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-        ?: CourseDetailTab.Overview.route
-
-    Column {
-        ScrollableTabRow(
-            selectedTabIndex = tabs.indexOfFirst { it.route == currentRoute }
-                .coerceAtLeast(0)
-        ) {
-            tabs.forEach { tab ->
-                Tab(
-                    selected = currentRoute == tab.route,
-                    onClick = {
-                        courseNavController.navigate(tab.route) {
-                            launchSingleTop = true
-                        }
-                    },
-                    text = { Text(tab.label) }
-                )
-            }
-        }
-
-        NavHost(
-            navController = courseNavController,
-            startDestination = CourseDetailTab.Overview.route,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            composable(CourseDetailTab.Overview.route) {
-                CourseOverviewTab(course)
-            }
-            composable(CourseDetailTab.Eligibility.route) {
-                CourseTextTab("Eligibility", course.eligibility)
-            }
-            composable(CourseDetailTab.Duration.route) {
-                CourseTextTab("Duration", course.duration)
-            }
-            composable(CourseDetailTab.Fees.route) {
-                CourseTextTab("Average Fees", course.averageFees)
-            }
-            composable(CourseDetailTab.FutureScope.route) {
-                CourseTextTab("Future Scope", course.futureScope)
-            }
-        }
-    }
-}
-
-/* -------------------- COURSE UI -------------------- */
-
-@Composable
-fun CourseOverviewTab(course: Course) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = course.title,
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = course.description,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
-
-@Composable
-fun CourseTextTab(title: String, content: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = content,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
-
 /* -------------------- PLACEHOLDER -------------------- */
-
 @Composable
 fun PlaceholderScreen(name: String) {
     Box(
