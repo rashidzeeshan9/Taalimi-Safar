@@ -24,8 +24,6 @@ data class Course(
     @SerializedName("future_scope") val future_scope: String,
     @SerializedName("average_salary") val average_salary: String,
 
-
-
     // --- HINDI FIELDS ---
     @SerializedName("course_name_hi") val courseName_hi: String?,
     @SerializedName("description_hi") val description_hi: String?,

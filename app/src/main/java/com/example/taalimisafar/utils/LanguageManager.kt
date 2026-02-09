@@ -1,32 +1,48 @@
 package com.example.taalimisafar.utils
 
-
-import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 
+// ✅ The Enum lives here now.
+enum class AppLanguage(val code: String, val displayName: String) {
+    NONE("en", "English Only"),
+    HINDI("hi", "English + Hindi"),
+    URDU("ur", "English + Urdu")
+}
+
+// ✅ The Manager lives here too.
 object LanguageManager {
-    private const val PREF_NAME = "app_prefs"
-    private const val KEY_LANG = "selected_language"
-
-
-    // Default is NONE (English Only)
     var currentLanguage = mutableStateOf(AppLanguage.NONE)
-
-    // Load saved language when app starts
-    fun loadLanguage(context: Context) {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        val savedCode = prefs.getString(KEY_LANG, AppLanguage.NONE.code) ?: AppLanguage.NONE.code
-
-        // Find the matching Enum for the saved code
-        currentLanguage.value = AppLanguage.values().find { it.code == savedCode } ?: AppLanguage.NONE
-    }
-
-    // Save user's choice
-    fun saveLanguage(context: Context, language: AppLanguage) {
-        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_LANG, language.code).apply()
-
-        // Update the live variable immediately
-        currentLanguage.value = language
+}
+object AppStrings {
+    fun getLabel(label: String, language: AppLanguage): String {
+        return when (language) {
+            AppLanguage.HINDI -> when (label) {
+                "Duration" -> "अवधि"
+                "Eligibility" -> "योग्यता"
+                "Mode" -> "मोड"
+                "Financial Overview" -> "वित्तीय विवरण"
+                "Govt Fees" -> "सरकारी फीस"
+                "Pvt Fees" -> "निजी फीस"
+                "Avg Salary" -> "औसत वेतन"
+                "Admission Process" -> "प्रवेश प्रक्रिया"
+                "Admission Date" -> "प्रवेश तिथि"
+                "Course Overview" -> "कोर्स विवरण"
+                else -> label
+            }
+            AppLanguage.URDU -> when (label) {
+                "Duration" -> "دورانیہ"
+                "Eligibility" -> "اہلیت"
+                "Mode" -> "طریقہ کار"
+                "Financial Overview" -> "مالیاتی جائزہ"
+                "Govt Fees" -> "سرکاری فیس"
+                "Pvt Fees" -> "پرائیویٹ فیس"
+                "Avg Salary" -> "اوسط تنخواہ"
+                "Admission Process" -> "داخلہ کا عمل"
+                "Admission Date" -> "داخلہ کی تاریخ"
+                "Course Overview" -> "کورس کا جائزہ"
+                else -> label
+            }
+            else -> label // Default to English
+        }
     }
 }
