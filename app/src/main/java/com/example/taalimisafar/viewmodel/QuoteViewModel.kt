@@ -21,7 +21,7 @@ class QuoteViewModel : ViewModel() {
     private fun fetchQuote() {
         viewModelScope.launch {
             try {
-                Log.d("API_TEST", "Attempting to connect to: http://10.0.2.2:8000/api/quotes/")
+                Log.d("API_TEST", "Attempting to connect to: http://192.168.159.1:8000/api/quotes/")
                 val response = RetrofitClient.api.getQuotes()
 
                 Log.d("API_TEST", "Response received. Items: ${response.size}")

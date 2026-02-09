@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -133,7 +133,7 @@ fun QuoteScreenContent(
                 InteractiveLanguageCard(
                     englishName = "Hindi",
                     nativeName = "हिंदी",
-                    icon = Icons.Default.MenuBook,
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
                     color1 = Color(0xFFEF6C00),
                     color2 = Color(0xFFFF9800),
                     onClick = { onLanguageSelected(AppLanguage.HINDI) }
