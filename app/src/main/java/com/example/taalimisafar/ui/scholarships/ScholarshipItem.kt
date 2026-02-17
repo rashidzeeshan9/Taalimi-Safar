@@ -29,7 +29,15 @@ fun ScholarshipItem(
     currentLanguage: AppLanguage
 ) {
     val context = LocalContext.current
-    val isActive = item.status.equals("active", ignoreCase = true)
+    val isActive = item.status.equals("active", ignoreCase = true) ?: false
+
+    val displayTitle = getLocalizedText(item.title, item.titleHi, item.titleUr, currentLanguage)
+    val displayProvider = getLocalizedText(item.providerName, item.providerNameHi, item.providerNameUr, currentLanguage)
+    val displayAmount = getLocalizedText(item.amount, item.amountHi, item.amountUr, currentLanguage)
+
+
+    val amountLabel = if (currentLanguage == AppLanguage.HINDI) "राशि" else if (currentLanguage == AppLanguage.URDU) "رقم" else "Amount"
+    val dateLabel = if (currentLanguage == AppLanguage.HINDI) "अंतिम तिथि" else if (currentLanguage == AppLanguage.URDU) "آخری تاریخ" else "Last Date"
 
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
@@ -41,7 +49,7 @@ fun ScholarshipItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // --- 1. HEADER (Title & Status) ---
+            // Title & Status
             Row(verticalAlignment = Alignment.Top) {
                 Box(
                     modifier = Modifier
@@ -62,16 +70,16 @@ fun ScholarshipItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = item.title,
+                        text = displayTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF263238)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = item.provider, fontSize = 12.sp, color = Color.Gray)
+                    Text(text = displayProvider, fontSize = 12.sp, color = Color.Gray)
                 }
 
-                // Status Badge
+                // Status
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = if(isActive) Color(0xFFE8F5E9) else Color(0xFFFFEBEE)
@@ -92,16 +100,16 @@ fun ScholarshipItem(
             HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- 2. INFO GRID ---
+            // INFO
             Row(modifier = Modifier.fillMaxWidth()) {
-                ScholarshipInfo(Icons.Default.Payments, "Amount / राशि", item.amount, Color(0xFF2E7D32), Modifier.weight(1f))
+                ScholarshipInfo(Icons.Default.Payments, amountLabel, displayAmount, Color(0xFF2E7D32), Modifier.weight(1f))
                 Box(modifier = Modifier.width(1.dp).height(40.dp).background(Color.LightGray.copy(alpha = 0.4f)))
-                ScholarshipInfo(Icons.Default.Event, "Last Date / अंतिम तिथि", item.lastDate, Color(0xFFD32F2F), Modifier.weight(1f).padding(start = 16.dp))
+                ScholarshipInfo(Icons.Default.Event, dateLabel, item.lastDate ?: "N/A", Color(0xFFD32F2F), Modifier.weight(1f).padding(start = 16.dp))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- 3. DESCRIPTION (Line-by-Line) ---
+            // DESCRIPTION
             if (item.description.isNotEmpty()) {
                 Text("About", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.Black)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -115,7 +123,7 @@ fun ScholarshipItem(
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // --- 4. ELIGIBILITY (Line-by-Line Fixed) ---
+            // ELIGIBILITY
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F7FA)),
                 shape = RoundedCornerShape(8.dp),
@@ -129,15 +137,12 @@ fun ScholarshipItem(
                         Text(item.eligibility, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF37474F))
                     } else {
                         val translation = if (currentLanguage == AppLanguage.HINDI) item.eligibilityHi else item.eligibilityUr
-                        // ✅ NOW USING INTERLEAVED TEXT HERE TOO
                         InterleavedText(english = item.eligibility, translated = translation, language = currentLanguage)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            // --- 5. APPLY BUTTON ---
             Button(
                 onClick = {
                     item.websiteLink?.let { url ->
@@ -153,7 +158,7 @@ fun ScholarshipItem(
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
-                    text = if(currentLanguage == AppLanguage.HINDI) "Apply Now / आवेदन करें" else "Apply Now",
+                    text = if(currentLanguage == AppLanguage.HINDI) "आवेदन करें" else if(currentLanguage == AppLanguage.URDU) "درخواست دیں" else "Apply Now",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -163,7 +168,6 @@ fun ScholarshipItem(
         }
     }
 }
-
 @Composable
 fun ScholarshipInfo(icon: ImageVector, label: String, value: String, color: Color, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
@@ -176,8 +180,14 @@ fun ScholarshipInfo(icon: ImageVector, label: String, value: String, color: Colo
         Text(text = value, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.Black)
     }
 }
-
-// --- ✅ UPDATED: Handles Newlines AND Periods ---
+fun getLocalizedText(english: String?, hindi: String?, urdu: String?, language: AppLanguage): String {
+    if (english == null) return ""
+    return when (language) {
+        AppLanguage.HINDI -> if (!hindi.isNullOrBlank()) hindi else english
+        AppLanguage.URDU -> if (!urdu.isNullOrBlank()) urdu else english
+        else -> english
+    }
+}
 @Composable
 fun InterleavedText(english: String, translated: String?, language: AppLanguage) {
     if (translated.isNullOrBlank()) {
@@ -185,11 +195,7 @@ fun InterleavedText(english: String, translated: String?, language: AppLanguage)
         return
     }
 
-    // 1. Split English by Newline OR Period
-    // This fixes bullet points or lists in eligibility
     val engSentences = english.split("\n", ".").map { it.trim() }.filter { it.isNotEmpty() }
-
-    // 2. Split Translation
     val transDelimiters = if (language == AppLanguage.HINDI) charArrayOf('|', '.', '।', '\n') else charArrayOf('۔', '.', '\n')
     val transSentences = translated.split(*transDelimiters).map { it.trim() }.filter { it.isNotEmpty() }
 
@@ -198,16 +204,14 @@ fun InterleavedText(english: String, translated: String?, language: AppLanguage)
 
     Column {
         for (i in 0 until maxLines) {
-            // English Line
             if (i < engSentences.size) {
                 Text(
-                    text = "• " + engSentences[i], // Added bullet for clarity
+                    text = "• " + engSentences[i],
                     color = Color.Black,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 2.dp)
                 )
             }
-            // Translated Line
             if (i < transSentences.size) {
                 Text(
                     text = transSentences[i],

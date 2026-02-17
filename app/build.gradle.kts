@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v280)
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(libs.ads.mobile.sdk)
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")

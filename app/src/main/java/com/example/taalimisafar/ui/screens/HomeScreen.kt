@@ -32,7 +32,6 @@ import com.example.taalimisafar.utils.AppLanguage
 import com.example.taalimisafar.utils.LanguageManager
 import com.example.taalimisafar.viewmodel.CourseViewModel
 
-// --- 1. DATA MODEL ---
 data class DashboardItem(
     val titleEn: String,
     val titleHi: String,
@@ -55,17 +54,13 @@ fun HomeScreen(
     val errorMessage by courseViewModel.errorMessage.collectAsState()
     val currentLanguage = LanguageManager.currentLanguage.value
     var searchQuery by remember { mutableStateOf("") }
-
-    // --- DASHBOARD ITEMS (Now Includes Scholarships!) ---
+// Dashboard category
     val dashboardItems = remember {
         listOf(
             DashboardItem("Academic", "शैक्षणिक", "تعلیمی", Icons.Default.School, Color(0xFFFF6D00), "academic"),
             DashboardItem("Diploma", "डिप्लोमा", "ڈپلومہ", Icons.AutoMirrored.Filled.MenuBook, Color(0xFF2962FF), "diploma"),
             DashboardItem("Women Empowerment", "महिला सशक्तिकरण", "خواتین کو بااختیار بنانا", Icons.Default.Female, Color(0xFFD500F9), "women"),
-
-            // ✅ ADDED SCHOLARSHIPS HERE (Purple Color for "Premium/Grant")
             DashboardItem("Scholarships", "छात्रवृत्ति", "وظائف", Icons.Default.EmojiEvents, Color(0xFF7B1FA2), "scholarship_tab"),
-
             DashboardItem("Internships", "इंटर्नशिप", "انٹرنشپ", Icons.Default.Work, Color(0xFF00C853), "internships"),
             DashboardItem("Skill Development", "कौशल विकास", "مہارتوں کی ترقی", Icons.Default.Build, Color(0xFFFFAB00), "skills"),
             DashboardItem("Important Dates", "महत्वपूर्ण तिथियां", "اہم تاریخیں", Icons.Default.Event, Color(0xFFF44336), "important_dates"),
@@ -80,7 +75,6 @@ fun HomeScreen(
     Scaffold(
         containerColor = Color(0xFFF5F5F5),
         topBar = {
-            // --- PROFESSIONAL GRADIENT HEADER ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
