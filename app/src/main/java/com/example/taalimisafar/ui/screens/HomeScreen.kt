@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -59,7 +60,7 @@ fun HomeScreen(
     val dashboardItems = remember {
         listOf(
             DashboardItem("Academic", "शैक्षणिक", "تعلیمی", Icons.Default.School, Color(0xFFFF6D00), "academic"),
-            DashboardItem("Diploma", "डिप्लोमा", "ڈپلومہ", Icons.Default.MenuBook, Color(0xFF2962FF), "diploma"),
+            DashboardItem("Diploma", "डिप्लोमा", "ڈپلومہ", Icons.AutoMirrored.Filled.MenuBook, Color(0xFF2962FF), "diploma"),
             DashboardItem("Women Empowerment", "महिला सशक्तिकरण", "خواتین کو بااختیار بنانا", Icons.Default.Female, Color(0xFFD500F9), "women"),
 
             // ✅ ADDED SCHOLARSHIPS HERE (Purple Color for "Premium/Grant")
@@ -70,7 +71,7 @@ fun HomeScreen(
             DashboardItem("Important Dates", "महत्वपूर्ण तिथियां", "اہم تاریخیں", Icons.Default.Event, Color(0xFFF44336), "important_dates"),
             DashboardItem("Govt Jobs", "सरकारी नौकरियां", "سرکاری نوکریاں", Icons.Default.AccountBalance, Color(0xFF455A64), "govt_jobs"),
             DashboardItem("Private Jobs", "निजी नौकरियां", "نجی نوکریاں", Icons.Default.BusinessCenter, Color(0xFF827717), "private_jobs"),
-            DashboardItem("Govt Schemes", "सरकारी योजनाएं", "سرکاری اسکیمیں", Icons.Default.Assignment, Color(0xFF009688), "govt_schemes"),
+            DashboardItem("Govt Schemes", "सरकारी योजनाएं", "سرکاری اسکیمیں", Icons.AutoMirrored.Filled.Assignment, Color(0xFF009688), "govt_schemes"),
             DashboardItem("Sports Career", "खेल में करियर", "کھیلوں میں کیریئر", Icons.Default.SportsSoccer, Color(0xFFFF5722), "sports"),
             DashboardItem("Good Hobbies", "अच्छी आदतें", "اچھے مشاغل", Icons.Default.Star, Color(0xFF6200EA), "hobbies")
         )

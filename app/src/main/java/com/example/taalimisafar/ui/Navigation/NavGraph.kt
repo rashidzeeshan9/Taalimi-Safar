@@ -38,9 +38,44 @@ fun NavGraph(
             )
         }
 
-        // ✅ 4. ADD THIS: SCHOLARSHIP ROUTE
+        // ✅ 4. SCHOLARSHIP ROUTE
         composable("scholarship_tab") {
             ScholarshipScreen(navController = navController)
+        }
+
+        // ✅ 5. OTHER CATEGORY ROUTES
+        composable("academic") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Academic", "academic")
+        }
+        composable("diploma") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Diploma", "diploma")
+        }
+        composable("women") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Women Empowerment", "women")
+        }
+        composable("internships") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Internships", "internships")
+        }
+        composable("skills") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Skill Development", "skills")
+        }
+        composable("important_dates") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Important Dates", "important_dates")
+        }
+        composable("govt_jobs") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Govt Jobs", "govt_jobs")
+        }
+        composable("private_jobs") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Private Jobs", "private_jobs")
+        }
+        composable("govt_schemes") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Govt Schemes", "govt_schemes")
+        }
+        composable("sports") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Sports Career", "sports")
+        }
+        composable("hobbies") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Good Hobbies", "hobbies")
         }
     }
 }
