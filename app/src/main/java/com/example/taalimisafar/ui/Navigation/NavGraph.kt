@@ -3,13 +3,11 @@ package com.example.taalimisafar.ui.Navigation
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.navArgument
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
-// --- Imports ---
+import androidx.navigation.navArgument
 import com.example.taalimisafar.ui.screens.MainScreen
 import com.example.taalimisafar.ui.screens.QuoteScreen
 import com.example.taalimisafar.ui.screens.SimpleDetailScreen
@@ -27,10 +25,12 @@ fun NavGraph(
 ) {
     val navController = rememberNavController()
 
-    // ✅ 1. Initialize the ViewModel here so it's shared across all screens
     val scholarshipViewModel: ScholarshipViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    NavHost(
+        navController = navController,
+        startDestination = "splash_screen"
+    ) {
 
         composable("splash_screen") {
             SplashScreen(navController = navController)
@@ -48,9 +48,7 @@ fun NavGraph(
             )
         }
 
-        // ==========================================
-        //         SCHOLARSHIP 3-STEP FLOW
-        // ==========================================
+        // Scholarship flow
 
         composable("scholarship_tab") {
             DynamicCategoryScreen(navController = navController)
@@ -90,19 +88,19 @@ fun NavGraph(
                 categoryId = categoryId,
                 typeId = typeId,
                 pageTitle = pageTitle,
-                viewModel = scholarshipViewModel // ✅ Pass shared instance
+                viewModel = scholarshipViewModel
             )
         }
 
         composable("scholarship_detail") {
-            // ✅ Fix: Pass the 'scholarshipViewModel' variable, not the class name
             ScholarshipDetailScreen(
                 navController = navController,
                 viewModel = scholarshipViewModel
             )
         }
 
-        // ✅ 5. OTHER CATEGORY ROUTES
+        // Category routes
+
         composable("academic") {
             com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Academic", "academic")
         }
@@ -136,6 +134,8 @@ fun NavGraph(
         composable("hobbies") {
             com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Religious Studies", "hobbies")
         }
+
+        // Generic detail routes used by grid sections
 
         composable(
             route = "category_detail/{title}",
@@ -175,5 +175,19 @@ fun NavGraph(
                 title = title
             )
         }
+
+        composable(
+            route = "education_board_detail/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")
+            SimpleDetailScreen(
+                navController = navController,
+                title = title
+            )
+        }
     }
 }
+
