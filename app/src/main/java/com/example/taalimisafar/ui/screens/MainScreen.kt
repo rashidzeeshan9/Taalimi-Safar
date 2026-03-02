@@ -21,16 +21,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-// IMPORTS
 import com.example.taalimisafar.ui.courses.CourseListScreen
-// Make sure HomeScreen is imported (if it's in the same package, it might not need an import line, but check)
-// import com.example.taalimisafar.ui.screens.HomeScreen
 
 /* -------------------- BOTTOM NAV -------------------- */
 
 sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
     object Home : BottomNavItem("home_tab", "Home", Icons.Default.Home)
-    object Colleges : BottomNavItem("colleges_tab", "Colleges", Icons.Default.Search)
+    object Colleges : BottomNavItem("colleges_tab", "Education/School", Icons.Default.Search) // ✅ Updated Label
     object Exam : BottomNavItem("exam_tab", "Exam", Icons.Default.Edit)
     object Course : BottomNavItem("course_tab", "Courses", Icons.Default.PlayArrow)
     object Profile : BottomNavItem("profile_tab", "Profile", Icons.Default.Person)
@@ -85,9 +82,9 @@ fun MainScreen(
             startDestination = BottomNavItem.Home.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            // 1. HOME TAB (UPDATED!)
+
+            // 1. HOME TAB
             composable(BottomNavItem.Home.route) {
-                // We call the real HomeScreen here now
                 HomeScreen(
                     navController = rootNavController,
                     isDarkTheme = isDarkTheme,
@@ -95,9 +92,9 @@ fun MainScreen(
                 )
             }
 
-            // 2. COLLEGES TAB
+            // 2. EDUCATION/SCHOOL TAB
             composable(BottomNavItem.Colleges.route) {
-                PlaceholderScreen("Colleges & Search")
+                PlaceholderScreen("Education/School")
             }
 
             // 3. EXAMS TAB
@@ -119,6 +116,7 @@ fun MainScreen(
 }
 
 /* -------------------- PLACEHOLDER -------------------- */
+
 @Composable
 fun PlaceholderScreen(name: String) {
     Box(

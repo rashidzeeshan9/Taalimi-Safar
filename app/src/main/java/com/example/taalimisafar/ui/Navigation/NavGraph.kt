@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 // --- Imports ---
 import com.example.taalimisafar.ui.screens.MainScreen
 import com.example.taalimisafar.ui.screens.QuoteScreen
+import com.example.taalimisafar.ui.screens.SimpleDetailScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
 import com.example.taalimisafar.ui.scholarships.DynamicCategoryScreen
 import com.example.taalimisafar.ui.scholarships.DynamicTypeScreen
@@ -47,14 +48,10 @@ fun NavGraph(
             )
         }
 
-<<<<<<< HEAD
-        // ✅ 4. SCHOLARSHIP ROUTE
-=======
         // ==========================================
         //         SCHOLARSHIP 3-STEP FLOW
         // ==========================================
 
->>>>>>> 40945b1f45c42284fa269ebe825358c72f98c127
         composable("scholarship_tab") {
             DynamicCategoryScreen(navController = navController)
         }
@@ -134,10 +131,49 @@ fun NavGraph(
             com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Govt Schemes", "govt_schemes")
         }
         composable("sports") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Sports Career", "sports")
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Career Industry", "sports")
         }
         composable("hobbies") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Good Hobbies", "hobbies")
+            com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Religious Studies", "hobbies")
+        }
+
+        composable(
+            route = "category_detail/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")
+            SimpleDetailScreen(
+                navController = navController,
+                title = title
+            )
+        }
+
+        composable(
+            route = "career_industry_detail/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")
+            SimpleDetailScreen(
+                navController = navController,
+                title = title
+            )
+        }
+
+        composable(
+            route = "religious_studies_detail/{title}",
+            arguments = listOf(
+                navArgument("title") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")
+            SimpleDetailScreen(
+                navController = navController,
+                title = title
+            )
         }
     }
 }

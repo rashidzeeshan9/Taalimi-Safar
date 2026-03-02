@@ -59,16 +59,16 @@ fun HomeScreen(
         listOf(
             DashboardItem("Academic", "शैक्षणिक", "تعلیمی", Icons.Default.School, Color(0xFFFF6D00), "academic"),
             DashboardItem("Diploma", "डिप्लोमा", "ڈپلومہ", Icons.AutoMirrored.Filled.MenuBook, Color(0xFF2962FF), "diploma"),
-            DashboardItem("Women Empowerment", "महिला सशक्तिकरण", "خواتین کو بااختیار بنانا", Icons.Default.Female, Color(0xFFD500F9), "women"),
+            DashboardItem("Women Empowerment", "महिला सशक्तिकरण", "خواتीन کو بااختیار بنانا", Icons.Default.Female, Color(0xFFD500F9), "women"),
             DashboardItem("Scholarships", "छात्रवृत्ति", "وظائف", Icons.Default.EmojiEvents, Color(0xFF7B1FA2), "scholarship_tab"),
             DashboardItem("Internships", "इंटर्नशिप", "انٹرنشپ", Icons.Default.Work, Color(0xFF00C853), "internships"),
             DashboardItem("Skill Development", "कौशल विकास", "مہارتوں کی ترقی", Icons.Default.Build, Color(0xFFFFAB00), "skills"),
             DashboardItem("Important Dates", "महत्वपूर्ण तिथियां", "اہم تاریخیں", Icons.Default.Event, Color(0xFFF44336), "important_dates"),
             DashboardItem("Govt Jobs", "सरकारी नौकरियां", "سرکاری نوکریاں", Icons.Default.AccountBalance, Color(0xFF455A64), "govt_jobs"),
             DashboardItem("Private Jobs", "निजी नौकरियां", "نجی نوکریاں", Icons.Default.BusinessCenter, Color(0xFF827717), "private_jobs"),
-            DashboardItem("Govt Schemes", "सरकारी योजनाएं", "سرکاری اسکیمیں", Icons.AutoMirrored.Filled.Assignment, Color(0xFF009688), "govt_schemes"),
-            DashboardItem("Sports Career", "खेल में करियर", "کھیلوں میں کیریئر", Icons.Default.SportsSoccer, Color(0xFFFF5722), "sports"),
-            DashboardItem("Good Hobbies", "अच्छी आदतें", "اچھے مشاغل", Icons.Default.Star, Color(0xFF6200EA), "hobbies")
+            DashboardItem("Govt Schemes", "सरकारी योजनाएं", "سرकारी اسکیمیں", Icons.AutoMirrored.Filled.Assignment, Color(0xFF009688), "govt_schemes"),
+            DashboardItem("Career Industry", "करियर उद्योग", "کیریئر انڈسٹری", Icons.Default.SportsSoccer, Color(0xFFFF5722), "sports"),
+            DashboardItem("Religious Studies", "धर्म अध्ययन", "مذہبی مطالعہ", Icons.Default.Star, Color(0xFF6200EA), "hobbies")
         )
     }
 

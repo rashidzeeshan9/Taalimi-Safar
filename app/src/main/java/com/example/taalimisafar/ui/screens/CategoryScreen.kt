@@ -1,5 +1,6 @@
 package com.example.taalimisafar.ui.screens
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,42 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.AccountTree
-import androidx.compose.material.icons.filled.AcUnit
-import androidx.compose.material.icons.filled.Agriculture
-import androidx.compose.material.icons.filled.Brush
-import androidx.compose.material.icons.filled.Business
-import androidx.compose.material.icons.filled.BusinessCenter
-import androidx.compose.material.icons.filled.Campaign
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Computer
-import androidx.compose.material.icons.filled.DesignServices
-import androidx.compose.material.icons.filled.EditCalendar
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Factory
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.HealthAndSafety
-import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.Laptop
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.LocalPolice
-import androidx.compose.material.icons.filled.LocalShipping
-import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.Receipt
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material.icons.filled.Science
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Translate
-import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.filled.VerifiedUser
-import androidx.compose.material.icons.filled.VolunteerActivism
-import androidx.compose.material.icons.filled.Work
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -67,57 +33,101 @@ fun CategoryScreen(
     categoryId: String
 ) {
     Scaffold(
-        containerColor = Color(0xFFF5F5F5), // Match Home background
+        containerColor = Color(0xFFF5F5F5),
         topBar = {
             TopAppBar(
                 title = { Text(text = categoryTitle) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFF5F5F5) // Seamless blend
+                    containerColor = Color(0xFFF5F5F5)
                 )
             )
         }
-    ) { paddingValues ->
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(padding)
         ) {
-            if (categoryId == "academic") {
-                AcademicSection(navController)
-            } else if (categoryId == "diploma") {
-                DiplomaSection(navController)
-            } else if (categoryId == "internships") {
-                InternshipSection(navController)
-            } else if (categoryId == "important_dates") {
-                ImportantDatesSection(navController)
-            } else if (categoryId == "skills") {
-                SkillDevelopmentSection(navController)
-            } else if (categoryId == "women") {
-                WomenEmpowermentSection(navController)
-            } else if (categoryId == "govt_jobs") {
-                GovtJobsSection(navController)
-            } else if (categoryId == "private_jobs") {
-                PrivateJobsSection(navController)
-            } else if (categoryId == "govt_schemes") {
-                GovtSchemesSection(navController)
-            } else {
-                // Default placeholder for other sections
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            when (categoryId) {
+                "academic" -> AcademicSection(navController)
+                "diploma" -> DiplomaSection(navController)
+                "internships" -> InternshipSection(navController)
+                "important_dates" -> ImportantDatesSection(navController)
+                "skills" -> SkillDevelopmentSection(navController)
+                "women" -> WomenEmpowermentSection(navController)
+                "govt_jobs" -> GovtJobsSection(navController)
+                "private_jobs" -> PrivateJobsSection(navController)
+                "govt_schemes" -> GovtSchemesSection(navController)
+                "sports" -> CareerIndustrySection(navController)
+                "hobbies" -> ReligiousStudiesSection(navController)
+            }
+        }
+    }
+}
+
+data class GridItem(val name: String, val icon: ImageVector, val color: Color, val route: String? = null)
+
+@Composable
+fun GridSection(
+    items: List<GridItem>,
+    onItemClick: ((GridItem) -> Unit)? = null
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(items) { item ->
+            Card(
+                elevation = CardDefaults.cardElevation(4.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(145.dp)
+                    .clickable {
+                        onItemClick?.invoke(item)
+                    }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(item.color.copy(alpha = 0.1f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.name,
+                            tint = item.color,
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     Text(
-                        text = "Welcome to the $categoryTitle Section!\n(ID: $categoryId)",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center
+                        text = item.name,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF37474F),
+                        textAlign = TextAlign.Center,
+                        maxLines = 3,
+                        lineHeight = 16.sp
                     )
                 }
             }
@@ -125,709 +135,306 @@ fun CategoryScreen(
     }
 }
 
-// --- ACADEMIC SECTION ---
+/* ---------------- SECTIONS ---------------- */
+
 @Composable
 fun AcademicSection(navController: NavController) {
-    val streams = listOf(
-        AcademicItem("Art", Icons.Default.Brush, Color(0xFFE91E63)),       // Pink
-        AcademicItem("Commerce", Icons.Default.ShoppingCart, Color(0xFF4CAF50)), // Green
-        AcademicItem("IT", Icons.Default.Computer, Color(0xFF2196F3)),     // Blue
-        AcademicItem("Law", Icons.Default.Gavel, Color(0xFF9C27B0)),       // Purple
-        AcademicItem("Science", Icons.Default.Science, Color(0xFFFF9800))  // Orange
+    val items = listOf(
+        GridItem("Art", Icons.Default.Brush, Color(0xFFE91E63)),
+        GridItem("Commerce", Icons.Default.ShoppingCart, Color(0xFF4CAF50)),
+        GridItem("IT", Icons.Default.Computer, Color(0xFF2196F3)),
+        GridItem("Judicial - Court", Icons.Default.Gavel, Color(0xFF9C27B0)),
+        GridItem("Science", Icons.Default.Science, Color(0xFFFF9800)),
+        GridItem("Vocational/\nSkill-based", Icons.Default.Work, Color(0xFF009688))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(streams) { stream ->
-            AcademicCard(stream)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class AcademicItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun AcademicCard(item: AcademicItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White), // White like Home
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp) // Match Home height
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Icon with Circular Background (Like Home)
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Text Style (Like Home)
-            Text(
-                text = item.name,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 1
-            )
-        }
-    }
-}
-
-// --- DIPLOMA SECTION ---
 @Composable
 fun DiplomaSection(navController: NavController) {
-    val courses = listOf(
-        DiplomaItem("Health Care", Icons.Default.HealthAndSafety, Color(0xFFE53935)),      // Red
-        DiplomaItem("Trade Diploma", Icons.Default.Business, Color(0xFFFB8C00)),           // Orange
-        DiplomaItem("Vocational Diploma", Icons.Default.Work, Color(0xFF43A047)),          // Green
-        DiplomaItem("Technical Diploma", Icons.Default.Computer, Color(0xFF1E88E5)),       // Blue
-        DiplomaItem("Steno Typist", Icons.Default.Keyboard, Color(0xFF8E24AA))             // Purple
+    val items = listOf(
+        GridItem("Health Care", Icons.Default.HealthAndSafety, Color(0xFFE53935)),
+        GridItem("Trade Diploma", Icons.Default.Business, Color(0xFFFB8C00)),
+        GridItem("Vocational Diploma", Icons.Default.Work, Color(0xFF43A047)),
+        GridItem("Technical Diploma", Icons.Default.Computer, Color(0xFF1E88E5)),
+        GridItem("Professional Diplomas", Icons.Default.AccountBalance, Color(0xFF8E24AA)),
+        GridItem("International Diplomas", Icons.Default.Public, Color(0xFF009688))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(courses) { course ->
-            DiplomaCard(course)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class DiplomaItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun DiplomaCard(item: DiplomaItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 14.sp, // Slightly smaller to fit "Vocational Diploma" if needed
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                lineHeight = 16.sp
-            )
-        }
-    }
-}
-
-// --- INTERNSHIP SECTION ---
 @Composable
 fun InternshipSection(navController: NavController) {
-    val internships = listOf(
-        InternshipItem("Paid Internship", Icons.Default.MonetizationOn, Color(0xFF4CAF50)), // Green
-        InternshipItem("Virtual/Remote", Icons.Default.Laptop, Color(0xFF2196F3)),            // Blue
-        InternshipItem("Creative & Design", Icons.Default.DesignServices, Color(0xFFE91E63)), // Pink
-        InternshipItem("Academic Credit", Icons.Default.School, Color(0xFFFFC107)),           // Amber
-        InternshipItem("Summer/Winter", Icons.Default.AcUnit, Color(0xFF00BCD4)),             // Cyan
-        InternshipItem("Corporate & Business", Icons.Default.BusinessCenter, Color(0xFF607D8B)) // Blue Grey
+    val items = listOf(
+        GridItem("Paid Internship", Icons.Default.MonetizationOn, Color(0xFF4CAF50)),
+        GridItem("Virtual/Remote", Icons.Default.Laptop, Color(0xFF2196F3)),
+        GridItem("Creative & Design", Icons.Default.DesignServices, Color(0xFFE91E63)),
+        GridItem("Academic Credit", Icons.Default.School, Color(0xFFFFC107)),
+        GridItem("Summer/Winter", Icons.Default.AcUnit, Color(0xFF00BCD4)),
+        GridItem("Corporate & Business", Icons.Default.BusinessCenter, Color(0xFF607D8B)),
+        GridItem("Cottage Industry\n- Karkhana", Icons.Default.Factory, Color(0xFF795548))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(internships) { item ->
-            InternshipCard(item)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class InternshipItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun InternshipCard(item: InternshipItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 13.sp, // Slightly smaller for longer titles
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                lineHeight = 16.sp
-            )
-        }
-    }
-}
-
-// --- IMPORTANT DATES SECTION ---
-@Composable
-fun ImportantDatesSection(navController: NavController) {
-    val exams = listOf(
-        ImportantDateItem("CUET", Icons.Default.Event, Color(0xFF673AB7)),            // Deep Purple
-        ImportantDateItem("NEET", Icons.Default.HealthAndSafety, Color(0xFFBE1B59)),  // Pink/Red
-        ImportantDateItem("JEE Mains", Icons.Default.Science, Color(0xFF1E88E5)),     // Blue
-        ImportantDateItem("NDA", Icons.Default.VerifiedUser, Color(0xFF43A047)),      // Green
-        ImportantDateItem("NTA", Icons.Default.EditCalendar, Color(0xFFFB8C00)),      // Orange
-        ImportantDateItem("UPSC", Icons.Default.AccountBalance, Color(0xFF5D4037))    // Brown
-    )
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(exams) { exam ->
-            ImportantDateCard(exam)
-        }
-    }
-}
-
-data class ImportantDateItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun ImportantDateCard(item: ImportantDateItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(130.dp)
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 15.sp, // Standard size
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 1
-            )
-        }
-    }
-}
-
-// --- SKILL DEVELOPMENT SECTION ---
 @Composable
 fun SkillDevelopmentSection(navController: NavController) {
-    val skills = listOf(
-        SkillItem("Soft Skill -\nProblem-Solving", Icons.Default.Lightbulb, Color(0xFFFFC107)), // Amber
-        SkillItem("Communication\nSkills", Icons.Default.Chat, Color(0xFF2196F3)),             // Blue
-        SkillItem("Interpersonal &\nSocial Skills", Icons.Default.Groups, Color(0xFFE91E63)),  // Pink
-        SkillItem("Leadership &\nInfluence", Icons.Default.Campaign, Color(0xFFFF5722)),       // Deep Orange
-        SkillItem("Computer\nSkills", Icons.Default.Computer, Color(0xFF00BCD4)),              // Cyan
-        SkillItem("English", Icons.Default.Translate, Color(0xFF673AB7))                       // Deep Purple
+    val items = listOf(
+        GridItem("Soft Skill -\nProblem-Solving", Icons.Default.Lightbulb, Color(0xFFFFC107)),
+        GridItem("Daily Life\nSkills", Icons.Default.Chat, Color(0xFF2196F3)),
+        GridItem("Interpersonal &\nSocial Skills", Icons.Default.Groups, Color(0xFFE91E63)),
+        GridItem("Leadership &\nInfluence", Icons.Default.Campaign, Color(0xFFFF5722)),
+        GridItem("Computer\nSkills", Icons.Default.Computer, Color(0xFF00BCD4)),
+        GridItem("Communication\nEnglish", Icons.Default.Translate, Color(0xFF673AB7)),
+        GridItem("Skilled Manual\nWork", Icons.Default.Build, Color(0xFF795548))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(skills) { skill ->
-            SkillCard(skill)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class SkillItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun SkillCard(item: SkillItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(145.dp) // Taller to fit 3 lines if needed
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                lineHeight = 16.sp
-            )
-        }
-    }
-}
-
-// --- WOMEN EMPOWERMENT SECTION ---
 @Composable
 fun WomenEmpowermentSection(navController: NavController) {
-    val schemes = listOf(
-        WomenItem("Business\nE-Commerce", Icons.Default.ShoppingBag, Color(0xFFE91E63)),       // Pink
-        WomenItem("One Stop Centres\n(Sakhi)", Icons.Default.VolunteerActivism, Color(0xFF9C27B0)), // Purple
-        WomenItem("Udyogini\nScheme", Icons.Default.BusinessCenter, Color(0xFFFB8C00)),  // Orange
-        WomenItem("PMUY, IGMSY,\nMKSP", Icons.Default.Agriculture, Color(0xFF43A047)),               // Green
-        WomenItem("Mahila Police\nVolunteers", Icons.Default.LocalPolice, Color(0xFF3F51B5))    // Indigo
+    val items = listOf(
+        GridItem("Business and\nE-Commerce", Icons.Default.ShoppingBag, Color(0xFFE91E63)),
+        GridItem("Skills", Icons.Default.Lightbulb, Color(0xFF9C27B0)),
+        GridItem("Mahila Govt.\nScheme", Icons.Default.AccountBalance, Color(0xFFFB8C00)),
+        GridItem("Health - Fitness", Icons.Default.HealthAndSafety, Color(0xFF43A047)),
+        GridItem("Domestic\nViolence", Icons.Default.Security, Color(0xFFE53935)),
+        GridItem("Art & Craft", Icons.Default.Brush, Color(0xFF3F51B5))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(schemes) { scheme ->
-            WomenCard(scheme)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
-
-data class WomenItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
 
 @Composable
-fun WomenCard(item: WomenItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(145.dp) // Taller to fit 3 lines
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
+fun ImportantDatesSection(navController: NavController) {
+    val items = listOf(
+        GridItem("State Govt Exam", Icons.Default.Event, Color(0xFF673AB7)),
+        GridItem("Central Government\nExam", Icons.Default.AccountBalance, Color(0xFF1E88E5)),
+        GridItem("Govt. Job", Icons.Default.Work, Color(0xFF43A047)),
+        GridItem("International\nAdmission", Icons.Default.Public, Color(0xFFFF9800)),
+        GridItem("Compliances", Icons.Default.Receipt, Color(0xFFE53935)),
+        GridItem("Types of Firm", Icons.Default.Business, Color(0xFF009688)),
+        GridItem("Banking &\nInsurance", Icons.Default.AccountBalance, Color(0xFF5D4037))
+    )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                lineHeight = 16.sp
-            )
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-// --- GOVT JOBS SECTION ---
 @Composable
 fun GovtJobsSection(navController: NavController) {
-    val jobs = listOf(
-        GovtJobsItem("Civil Services\n(Administrative)", Icons.Default.Gavel, Color(0xFFE53935)), // Red
-        GovtJobsItem("Defence &\nSecurity", Icons.Default.VerifiedUser, Color(0xFF43A047)),       // Green
-        GovtJobsItem("Public Sector\nUndertakings", Icons.Default.Factory, Color(0xFFFB8C00)),    // Orange
-        GovtJobsItem("Teaching &\nEducation", Icons.Default.School, Color(0xFF1E88E5)),           // Blue
-        GovtJobsItem("Scientific &\nResearch", Icons.Default.Science, Color(0xFFE91E63)),         // Pink
-        GovtJobsItem("Job Classifications\n(Hierarchy)", Icons.Default.AccountTree, Color(0xFF673AB7)) // Deep Purple
+    val items = listOf(
+        GridItem("Civil Services\n(Administrative)", Icons.Default.Gavel, Color(0xFFE53935)),
+        GridItem("Defence &\nSecurity", Icons.Default.VerifiedUser, Color(0xFF43A047)),
+        GridItem("Public Sector\nUndertakings", Icons.Default.Factory, Color(0xFFFB8C00)),
+        GridItem("Teaching &\nEducation", Icons.Default.School, Color(0xFF1E88E5)),
+        GridItem("Scientific &\nResearch", Icons.Default.Science, Color(0xFFE91E63)),
+        GridItem("Job Classifications\n(Hierarchy)", Icons.Default.AccountTree, Color(0xFF673AB7)),
+        GridItem("Health Care", Icons.Default.HealthAndSafety, Color(0xFF009688)),
+        GridItem("Embassy -\nDiplomates", Icons.Default.Public, Color(0xFF6A1B9A))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(jobs) { job ->
-            GovtJobsCard(job)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class GovtJobsItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun GovtJobsCard(item: GovtJobsItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(145.dp) // Taller to fit 3 lines
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                lineHeight = 16.sp
-            )
-        }
-    }
-}
-
-// --- PRIVATE JOBS SECTION ---
 @Composable
 fun PrivateJobsSection(navController: NavController) {
-    val jobs = listOf(
-        PrivateJobItem("Accounts", Icons.Default.Receipt, Color(0xFF4CAF50)),          // Green
-        PrivateJobItem("HR", Icons.Default.Groups, Color(0xFF9C27B0)),                 // Purple
-        PrivateJobItem("Marketing", Icons.Default.TrendingUp, Color(0xFFE91E63)),      // Pink
-        PrivateJobItem("Creative &\nContent", Icons.Default.DesignServices, Color(0xFFFF9800)), // Orange
-        PrivateJobItem("Operations", Icons.Default.Settings, Color(0xFF607D8B)),       // Blue Grey
-        PrivateJobItem("Quick\nCommerce", Icons.Default.LocalShipping, Color(0xFF2196F3)) // Blue
+    val items = listOf(
+        GridItem("Corporate", Icons.Default.BusinessCenter, Color(0xFF1E88E5)),
+        GridItem("Factory", Icons.Default.Factory, Color(0xFFE53935)),
+        GridItem("FMCG\nWholesalers", Icons.Default.ShoppingCart, Color(0xFF43A047)),
+        GridItem("Daily Wages", Icons.Default.MonetizationOn, Color(0xFFFF9800)),
+        GridItem("Contract\n3rd Party", Icons.Default.Receipt, Color(0xFF9C27B0)),
+        GridItem("Semi-Govt", Icons.Default.AccountBalance, Color(0xFF009688)),
+        GridItem("Mandi System", Icons.Default.Agriculture, Color(0xFF795548)),
+        GridItem("Quick\nCommerce", Icons.Default.LocalShipping, Color(0xFF2196F3))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(jobs) { job ->
-            PrivateJobsCard(job)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class PrivateJobItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
-
-@Composable
-fun PrivateJobsCard(item: PrivateJobItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(145.dp) // Taller to fit 3 lines
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = item.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                lineHeight = 16.sp
-            )
-        }
-    }
-}
-
-// --- GOVT SCHEMES SECTION ---
 @Composable
 fun GovtSchemesSection(navController: NavController) {
-    val schemes = listOf(
-        GovtSchemeItem("PM VidyaLaxmi", Icons.Default.School, Color(0xFF1E88E5)),              // Blue
-        GovtSchemeItem("CSIS", Icons.Default.AccountBalance, Color(0xFF43A047)),               // Green
-        GovtSchemeItem("National\nScholarship Portal", Icons.AutoMirrored.Filled.MenuBook, Color(0xFFFF9800)), // Orange
-        GovtSchemeItem("Begum Hazrat\nMahal Scholarship", Icons.Default.VolunteerActivism, Color(0xFF9C27B0)), // Purple
-        GovtSchemeItem("PM Mudra\nYojna", Icons.Default.MonetizationOn, Color(0xFF009688)),    // Teal
-        GovtSchemeItem("Ayushman Bharat\n- PMJAY", Icons.Default.HealthAndSafety, Color(0xFFE53935)) // Red
+    val items = listOf(
+        GridItem("State Govt", Icons.Default.AccountBalance, Color(0xFF1E88E5)),
+        GridItem("Central Government\nschemes", Icons.Default.AccountBalance, Color(0xFF43A047)),
+        GridItem("Tourism\nDevelopment", Icons.Default.TravelExplore, Color(0xFFFF9800)),
+        GridItem("PSU Schemes", Icons.Default.Factory, Color(0xFFE53935)),
+        GridItem("Private NGO\nSchemes", Icons.Default.VolunteerActivism, Color(0xFF9C27B0)),
+        GridItem("International\nSchemes", Icons.Default.Public, Color(0xFF009688)),
+        GridItem("United Nations\nProgrammes", Icons.Default.Groups, Color(0xFF3F51B5)),
+        GridItem("WHO\nProgrammes", Icons.Default.HealthAndSafety, Color(0xFF795548))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(schemes) { scheme ->
-            GovtSchemeCard(scheme)
-        }
+    GridSection(items) { item ->
+        navController.navigate("category_detail/${Uri.encode(item.name)}")
     }
 }
 
-data class GovtSchemeItem(
-    val name: String,
-    val icon: ImageVector,
-    val color: Color
-)
+@Composable
+fun CareerIndustrySection(navController: NavController) {
+    val items = listOf(
+        GridItem(
+            "Aviation Industry",
+            Icons.Default.Flight,
+            Color(0xFF1E88E5),
+            route = "career_industry_detail/${Uri.encode("Aviation Industry")}"
+        ),
+        GridItem(
+            "Hospitality Industry",
+            Icons.Default.Hotel,
+            Color(0xFFE53935),
+            route = "career_industry_detail/${Uri.encode("Hospitality Industry")}"
+        ),
+        GridItem(
+            "Real Estate Industry",
+            Icons.Default.LocationCity,
+            Color(0xFF6D4C41),
+            route = "career_industry_detail/${Uri.encode("Real Estate Industry")}"
+        ),
+        GridItem(
+            "Automobile Industry",
+            Icons.Default.DirectionsCar,
+            Color(0xFF00897B),
+            route = "career_industry_detail/${Uri.encode("Automobile Industry")}"
+        ),
+        GridItem(
+            "Telecommunications\nIndustry",
+            Icons.Default.PhoneAndroid,
+            Color(0xFF3949AB),
+            route = "career_industry_detail/${Uri.encode("Telecommunications Industry")}"
+        ),
+        GridItem(
+            "Retail &\nE-commerce",
+            Icons.Default.ShoppingCart,
+            Color(0xFFF57C00),
+            route = "career_industry_detail/${Uri.encode("Retail & E-commerce")}"
+        ),
+        GridItem(
+            "Career in Sports",
+            Icons.Default.SportsSoccer,
+            Color(0xFFFF5722),
+            route = "career_industry_detail/${Uri.encode("Career in Sports")}"
+        ),
+        GridItem(
+            "Agriculture &\nFood",
+            Icons.Default.Agriculture,
+            Color(0xFF43A047),
+            route = "career_industry_detail/${Uri.encode("Agriculture & Food")}"
+        )
+    )
+
+    GridSection(items) { item ->
+        item.route?.let { navController.navigate(it) }
+    }
+}
 
 @Composable
-fun GovtSchemeCard(item: GovtSchemeItem) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(145.dp) // Taller to fit 3 lines
-            .clickable { /* Handle click later */ }
-    ) {
-        Column(
+fun ReligiousStudiesSection(navController: NavController) {
+    val items = listOf(
+        GridItem(
+            "Hindu",
+            Icons.Default.TempleHindu,
+            Color(0xFFE91E63),
+            route = "religious_studies_detail/${Uri.encode("Hindu")}"
+        ),
+        GridItem(
+            "Muslim",
+            Icons.Default.Mosque,
+            Color(0xFF1E88E5),
+            route = "religious_studies_detail/${Uri.encode("Muslim")}"
+        ),
+        GridItem(
+            "Sikhism",
+            Icons.Default.TempleBuddhist,
+            Color(0xFFFFC107),
+            route = "religious_studies_detail/${Uri.encode("Sikhism")}"
+        ),
+        GridItem(
+            "Christianity",
+            Icons.Default.Church,
+            Color(0xFF3F51B5),
+            route = "religious_studies_detail/${Uri.encode("Christianity")}"
+        ),
+        GridItem(
+            "Buddhists",
+            Icons.Default.SelfImprovement,
+            Color(0xFF4CAF50),
+            route = "religious_studies_detail/${Uri.encode("Buddhists")}"
+        ),
+        GridItem(
+            "Jain",
+            Icons.Default.Spa,
+            Color(0xFF9C27B0),
+            route = "religious_studies_detail/${Uri.encode("Jain")}"
+        ),
+        GridItem(
+            "Parsi",
+            Icons.Default.LocalFireDepartment,
+            Color(0xFFFF7043),
+            route = "religious_studies_detail/${Uri.encode("Parsi")}"
+        ),
+        GridItem(
+            "Adivasi\nReligions",
+            Icons.Default.Groups,
+            Color(0xFF00695C),
+            route = "religious_studies_detail/${Uri.encode("Adivasi Religions")}"
+        )
+    )
+
+    GridSection(items) { item ->
+        item.route?.let { navController.navigate(it) }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleDetailScreen(
+    navController: NavController,
+    title: String
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = title) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(padding),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(item.color.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.name,
-                    tint = item.color,
-                    modifier = Modifier.size(26.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             Text(
-                text = item.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF37474F),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                lineHeight = 16.sp
+                text = title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
             )
         }
     }
