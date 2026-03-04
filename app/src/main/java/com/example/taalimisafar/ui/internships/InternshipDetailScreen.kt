@@ -34,6 +34,13 @@ import com.example.taalimisafar.utils.AppLanguage
 import com.example.taalimisafar.utils.AppStrings
 import com.example.taalimisafar.viewmodel.InternshipViewModel
 
+// Make sure these match your theme colors, or replace them with your actual color references
+private val IndigoPrimary = Color(0xFF4F46E5)
+private val IndigoLight = Color(0xFFE0E7FF)
+private val BackgroundSlate = Color(0xFFF8FAFC)
+private val TextDark = Color(0xFF1E293B)
+private val TextMuted = Color(0xFF64748B)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InternshipDetailScreen(
@@ -101,7 +108,7 @@ fun InternshipDetailScreen(
     ) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().background(BackgroundSlate).padding(paddingValues).verticalScroll(rememberScrollState())) {
 
-            // header
+            // HEADER
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,14 +120,17 @@ fun InternshipDetailScreen(
             ) {
                 Column {
                     DualLineText(
-                        enText = internship.Intership_title,
-                        transText = getTrans(internship.Intership_title_hi, internship.Intership_title_ur),
+                        enText = internship.title,
+                        transText = getTrans(internship.title_hi, internship.title_ur),
                         isHeader = true
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    val orgDomainEn = "${internship.Organization_name} • ${internship.Domain}"
-                    val orgDomainTrans = getTrans("${internship.Organization_name_hi} • ${internship.Domain_hi}", "${internship.Organization_name_ur} • ${internship.Domain_ur}")
+                    val orgDomainEn = "${internship.organization_name} • ${internship.domain}"
+                    val orgDomainTrans = getTrans(
+                        "${internship.organization_name_hi} • ${internship.domain_hi}",
+                        "${internship.organization_name_ur} • ${internship.domain_ur}"
+                    )
 
                     Surface(color = Color.White.copy(alpha = 0.15f), shape = RoundedCornerShape(12.dp)) {
                         Text(
@@ -132,10 +142,10 @@ fun InternshipDetailScreen(
                 }
             }
 
-            // main content
+            // MAIN CONTENT
             Column(modifier = Modifier.padding(horizontal = 16.dp).offset(y = (-30).dp)) {
 
-                // DASHBOARD
+                // DASHBOARD CARD
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -144,12 +154,25 @@ fun InternshipDetailScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            // IMAGE OR DEFAULT LOGO LOGIC
                             Surface(modifier = Modifier.size(64.dp), shape = CircleShape, color = IndigoLight) {
-                                if (!internship.image.isNullOrEmpty() && internship.image != "null") {
-                                    val imageUrl = if (internship.image.startsWith("http")) internship.image else "http://10.0.2.2:8000" + internship.image
-                                    AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(imageUrl).crossfade(true).build(), contentDescription = null, contentScale = ContentScale.Crop)
+                                val imageUrl = internship.image?.let { img ->
+                                    if (img.startsWith("http")) img else "http://10.0.2.2:8000$img"
+                                }
+
+                                if (!imageUrl.isNullOrBlank() && imageUrl != "null") {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(imageUrl)
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = "Company Logo",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
                                 } else {
-                                    Icon(Icons.Default.Business, contentDescription = null, modifier = Modifier.padding(16.dp), tint = IndigoPrimary)
+                                    // Default Fallback Logo
+                                    Icon(Icons.Default.Business, contentDescription = "Default Logo", modifier = Modifier.padding(16.dp), tint = IndigoPrimary)
                                 }
                             }
                             Spacer(modifier = Modifier.width(16.dp))
@@ -165,14 +188,14 @@ fun InternshipDetailScreen(
 
                         // Grid Row 1
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            InfoBox(icon = Icons.Default.LocationOn, iconBg = Color(0xFFE0F2FE), iconColor = Color(0xFF0284C7), title = "Location", valueEn = internship.Location, valueTrans = getTrans(internship.Location_hi, internship.Location_ur), modifier = Modifier.weight(1f))
+                            InfoBox(icon = Icons.Default.LocationOn, iconBg = Color(0xFFE0F2FE), iconColor = Color(0xFF0284C7), title = "Location", valueEn = internship.location, valueTrans = getTrans(internship.location_hi, internship.location_ur), modifier = Modifier.weight(1f))
                             InfoBox(icon = Icons.Default.Timer, iconBg = Color(0xFFFEF3C7), iconColor = Color(0xFFD97706), title = AppStrings.getLabel("Duration", currentLanguage), valueEn = internship.duration, valueTrans = getTrans(internship.duration_hi, internship.duration_ur), modifier = Modifier.weight(1f))
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         // Grid Row 2
-                        val stipend = if (internship.stipend_amount.isNullOrBlank() || internship.stipend_amount == "0") "Unpaid" else "₹${internship.stipend_amount}"
+                        val stipend = if (internship.stipend_amount.isNullOrBlank() || internship.stipend_amount == "0" || internship.stipend_amount == "0.00") "Unpaid" else "₹${internship.stipend_amount}"
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             InfoBox(icon = Icons.Default.Payments, iconBg = Color(0xFFD1FAE5), iconColor = Color(0xFF059669), title = "Stipend", valueEn = stipend, valueTrans = null, modifier = Modifier.weight(1f))
                             InfoBox(icon = Icons.Default.Event, iconBg = Color(0xFFFFE4E6), iconColor = Color(0xFFE11D48), title = "Apply By", valueEn = internship.last_date_to_apply ?: "N/A", valueTrans = null, modifier = Modifier.weight(1f))
@@ -183,28 +206,35 @@ fun InternshipDetailScreen(
                 // RESPONSIBILITIES
                 val respTitle = getInlineText("Responsibilities", "जिम्मेदारियां", "ذمہ داریاں")
                 InteractiveExpandable(icon = Icons.Default.Description, title = respTitle, isInitiallyExpanded = true) {
-                    DualLineText(enText = internship.responsibilities, transText = getTrans(internship.responsibilities_hi, internship.responsibilities_ur))
+                    LineByLineDualText(
+                        enText = internship.responsibilities,
+                        transText = getTrans(internship.responsibilities_hi, internship.responsibilities_ur)
+                    )
                 }
 
                 // SKILLS & TOOLS
                 val skillsTitle = getInlineText("Skills & Tools", "कौशल और उपकरण", "مہارت اور ٹولز")
                 InteractiveExpandable(icon = Icons.Default.Handyman, title = skillsTitle) {
-                    if (!internship.Skills_required.isNullOrBlank() && internship.Skills_required != "null") {
-                        DualLineText(
-                            enText = "Tech Stack: ${internship.Skills_required}",
-                            transText = getTrans("टेक स्टैक: ${internship.Skills_required_hi}", "ٹیک اسٹیک: ${internship.Skills_required_ur}")
+                    if (!internship.skills_required.isNullOrBlank() && internship.skills_required != "null") {
+                        Text("Tech Stack:", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = IndigoPrimary)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        LineByLineDualText(
+                            enText = internship.skills_required,
+                            transText = getTrans(internship.skills_required_hi, internship.skills_required_ur)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     if (!internship.tools_technologies.isNullOrBlank() && internship.tools_technologies != "null") {
-                        DualLineText(
-                            enText = "Tools: ${internship.tools_technologies}",
-                            transText = getTrans("उपकरण: ${internship.tools_technologies_hi}", "ٹولز: ${internship.tools_technologies_ur}")
+                        Text("Tools:", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = IndigoPrimary)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        LineByLineDualText(
+                            enText = internship.tools_technologies,
+                            transText = getTrans(internship.tools_technologies_hi, internship.tools_technologies_ur)
                         )
                     }
                 }
 
-                // ELIGIBILITY
+                // ELIGIBILITY & SELECTION
                 val eligTitle = getInlineText("Eligibility & Selection", "योग्यता और चयन", "اہلیت اور انتخاب")
                 InteractiveExpandable(icon = Icons.Default.Checklist, title = eligTitle) {
                     DualLineText(enText = "Who Can Apply: ${internship.who_can_apply}", transText = getTrans("कौन आवेदन कर सकता है: ${internship.who_can_apply_hi}", "کون اپلائی کر سکتا ہے: ${internship.who_can_apply_ur}"))
@@ -216,7 +246,10 @@ fun InternshipDetailScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     Text("Selection Process:", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = IndigoPrimary)
                     Spacer(modifier = Modifier.height(4.dp))
-                    DualLineText(enText = internship.selection_process, transText = getTrans(internship.selection_process_hi, internship.selection_process_ur))
+                    LineByLineDualText(
+                        enText = internship.selection_process,
+                        transText = getTrans(internship.selection_process_hi, internship.selection_process_ur)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(100.dp))
@@ -224,6 +257,8 @@ fun InternshipDetailScreen(
         }
     }
 }
+
+// --- HELPER COMPOSABLES BELOW ---
 
 @Composable
 fun InfoBox(icon: ImageVector, iconBg: Color, iconColor: Color, title: String, valueEn: String?, valueTrans: String?, modifier: Modifier = Modifier) {
@@ -264,11 +299,49 @@ fun DualLineText(enText: String?, transText: String?, isHeader: Boolean = false,
         }
     }
 }
+
+@Composable
+fun LineByLineDualText(enText: String?, transText: String?) {
+    if (enText.isNullOrBlank() || enText == "null") return
+
+    // Split text by new lines
+    val enLines = enText.split("\n").filter { it.isNotBlank() }
+    val transLines = transText?.split("\n")?.filter { it.isNotBlank() } ?: emptyList()
+
+    Column {
+        enLines.forEachIndexed { index, enLine ->
+            val transLine = transLines.getOrNull(index)
+
+            // English Line
+            Text(
+                text = enLine.trim(),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextDark,
+                lineHeight = 22.sp
+            )
+
+            // Translated Line directly underneath
+            if (!transLine.isNullOrBlank() && transLine != "null") {
+                Text(
+                    text = transLine.trim(),
+                    fontSize = 14.sp,
+                    color = IndigoPrimary,
+                    fontWeight = FontWeight.Medium,
+                    lineHeight = 22.sp,
+                    modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
+                )
+            } else {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+    }
+}
+
 @Composable
 fun InteractiveExpandable(icon: ImageVector, title: String, isInitiallyExpanded: Boolean = false, content: @Composable () -> Unit) {
     var isExpanded by remember { mutableStateOf(isInitiallyExpanded) }
     val rotationAngle by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f, label = "ArrowRotation")
-
     val bgColor by animateColorAsState(targetValue = if (isExpanded) Color(0xFFFAFAFF) else Color.White, label = "BgColor")
 
     Card(

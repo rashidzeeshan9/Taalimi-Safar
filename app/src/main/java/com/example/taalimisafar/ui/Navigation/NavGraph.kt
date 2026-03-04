@@ -106,7 +106,8 @@ fun NavGraph(
                 categoryName = categoryName,
                 viewModel = internshipViewModel,
                 onBackClick = { navController.popBackStack() },
-                onInternshipClick = { internship -> navController.navigate("internship_detail/${internship.id}") }
+                // 👇 This line is now perfectly fixed!
+                onInternshipClick = { internshipId -> navController.navigate("internship_detail/$internshipId") }
             )
         }
 

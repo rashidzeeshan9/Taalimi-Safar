@@ -35,11 +35,17 @@ interface ApiService {
     @GET("api/internships/categories/")
     suspend fun getInternshipCategories(): List<InternshipCategory>
 
-    @GET("api/internships/list/")
-    suspend fun getInternshipsByCategory(
-        @Query("category_id") categoryId: Int
+    @GET("api/internships/")
+    suspend fun getInternships(
+        @Query("category") categoryId: Int? = null,           // Now optional!
+        @Query("search") searchQuery: String? = null,            // For text search
+        @Query("mode") mode: String? = null,                     // "online" (Remote), "offline", "hybrid"
+        @Query("internship_type") type: String? = null,          // "Paid" or "Unpaid"
+        @Query("location__icontains") location: String? = null,  // e.g., "Delhi"
+        @Query("domain__icontains") domain: String? = null,      // e.g., "IT"
+        @Query("stipend_amount__gte") minStipend: Int? = null,   // Minimum stipend amount
+        @Query("ppo_opportunity") ppo: Boolean? = null           // true if PPO is required
     ): List<Internship>
-
     @GET("api/jobs/")
     suspend fun getJobsByCategory(
         @Query("category") categoryId: Int? = null,
