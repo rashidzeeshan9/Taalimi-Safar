@@ -25,7 +25,7 @@ class CategoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val response = RetrofitClient.api.getCategories()
+                val response = RetrofitClient.api.getScholarshipCategories()
                 _categories.value = response
             } catch (e: Exception) {
                 e.printStackTrace()

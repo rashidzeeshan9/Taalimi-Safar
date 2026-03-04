@@ -70,7 +70,7 @@ fun CategoryScreen(
     }
 }
 
-data class GridItem(val name: String, val icon: ImageVector, val color: Color, val route: String? = null)
+data class GridItem(val name: String, val icon: ImageVector, val color: Color, val route: String? = null, val id: Int = 0)
 
 @Composable
 fun GridSection(
@@ -172,17 +172,17 @@ fun DiplomaSection(navController: NavController) {
 @Composable
 fun InternshipSection(navController: NavController) {
     val items = listOf(
-        GridItem("Paid Internship", Icons.Default.MonetizationOn, Color(0xFF4CAF50)),
-        GridItem("Virtual/Remote", Icons.Default.Laptop, Color(0xFF2196F3)),
-        GridItem("Creative & Design", Icons.Default.DesignServices, Color(0xFFE91E63)),
-        GridItem("Academic Credit", Icons.Default.School, Color(0xFFFFC107)),
-        GridItem("Summer/Winter", Icons.Default.AcUnit, Color(0xFF00BCD4)),
-        GridItem("Corporate & Business", Icons.Default.BusinessCenter, Color(0xFF607D8B)),
-        GridItem("Cottage Industry\n- Karkhana", Icons.Default.Factory, Color(0xFF795548))
+        GridItem("Paid Internship", Icons.Default.MonetizationOn, Color(0xFF4CAF50), id = 1),
+        GridItem("Virtual/Remote", Icons.Default.Laptop, Color(0xFF2196F3), id = 2),
+        GridItem("Creative & Design", Icons.Default.DesignServices, Color(0xFFE91E63), id = 3),
+        GridItem("Academic Credit", Icons.Default.School, Color(0xFFFFC107), id = 4),
+        GridItem("Summer/Winter", Icons.Default.AcUnit, Color(0xFF00BCD4), id = 5),
+        GridItem("Corporate & Business", Icons.Default.BusinessCenter, Color(0xFF607D8B), id = 6),
+        GridItem("Cottage Industry\n- Karkhana", Icons.Default.Factory, Color(0xFF795548), id = 7)
     )
 
     GridSection(items) { item ->
-        navController.navigate("category_detail/${Uri.encode(item.name)}")
+        navController.navigate("internship_list/${item.id}/${Uri.encode(item.name)}")
     }
 }
 
@@ -236,39 +236,45 @@ fun ImportantDatesSection(navController: NavController) {
     }
 }
 
+// 👇 FIXED: Added placeholder IDs and routed to jobList
 @Composable
 fun GovtJobsSection(navController: NavController) {
     val items = listOf(
-        GridItem("Civil Services\n(Administrative)", Icons.Default.Gavel, Color(0xFFE53935)),
-        GridItem("Defence &\nSecurity", Icons.Default.VerifiedUser, Color(0xFF43A047)),
-        GridItem("Public Sector\nUndertakings", Icons.Default.Factory, Color(0xFFFB8C00)),
-        GridItem("Teaching &\nEducation", Icons.Default.School, Color(0xFF1E88E5)),
-        GridItem("Scientific &\nResearch", Icons.Default.Science, Color(0xFFE91E63)),
-        GridItem("Job Classifications\n(Hierarchy)", Icons.Default.AccountTree, Color(0xFF673AB7)),
-        GridItem("Health Care", Icons.Default.HealthAndSafety, Color(0xFF009688)),
-        GridItem("Embassy -\nDiplomates", Icons.Default.Public, Color(0xFF6A1B9A))
+        // ⚠️ REPLACE these IDs (10, 11, etc.) with the real category IDs from your Django Admin panel!
+        GridItem("Civil Services\n(Administrative)", Icons.Default.Gavel, Color(0xFFE53935), id = 10),
+        GridItem("Defence &\nSecurity", Icons.Default.VerifiedUser, Color(0xFF43A047), id = 11),
+        GridItem("Public Sector\nUndertakings", Icons.Default.Factory, Color(0xFFFB8C00), id = 12),
+        GridItem("Teaching &\nEducation", Icons.Default.School, Color(0xFF1E88E5), id = 13),
+        GridItem("Scientific &\nResearch", Icons.Default.Science, Color(0xFFE91E63), id = 14),
+        GridItem("Job Classifications\n(Hierarchy)", Icons.Default.AccountTree, Color(0xFF673AB7), id = 15),
+        GridItem("Health Care", Icons.Default.HealthAndSafety, Color(0xFF009688), id = 16),
+        GridItem("Embassy -\nDiplomates", Icons.Default.Public, Color(0xFF6A1B9A), id = 17)
     )
 
     GridSection(items) { item ->
-        navController.navigate("category_detail/${Uri.encode(item.name)}")
+        val safeName = item.name.replace("\n", " ") // Removes the line break for a clean title
+        navController.navigate("jobList/${item.id}/${Uri.encode(safeName)}")
     }
 }
 
+// 👇 FIXED: Added placeholder IDs and routed to jobList
 @Composable
 fun PrivateJobsSection(navController: NavController) {
     val items = listOf(
-        GridItem("Corporate", Icons.Default.BusinessCenter, Color(0xFF1E88E5)),
-        GridItem("Factory", Icons.Default.Factory, Color(0xFFE53935)),
-        GridItem("FMCG\nWholesalers", Icons.Default.ShoppingCart, Color(0xFF43A047)),
-        GridItem("Daily Wages", Icons.Default.MonetizationOn, Color(0xFFFF9800)),
-        GridItem("Contract\n3rd Party", Icons.Default.Receipt, Color(0xFF9C27B0)),
-        GridItem("Semi-Govt", Icons.Default.AccountBalance, Color(0xFF009688)),
-        GridItem("Mandi System", Icons.Default.Agriculture, Color(0xFF795548)),
-        GridItem("Quick\nCommerce", Icons.Default.LocalShipping, Color(0xFF2196F3))
+        // ⚠️ REPLACE these IDs (1, 2, etc.) with the real category IDs from your Django Admin panel!
+        GridItem("Corporate", Icons.Default.BusinessCenter, Color(0xFF1E88E5), id = 1),
+        GridItem("Factory", Icons.Default.Factory, Color(0xFFE53935), id = 2),
+        GridItem("FMCG\nWholesalers", Icons.Default.ShoppingCart, Color(0xFF43A047), id = 3),
+        GridItem("Daily Wages", Icons.Default.MonetizationOn, Color(0xFFFF9800), id = 4),
+        GridItem("Contract\n3rd Party", Icons.Default.Receipt, Color(0xFF9C27B0), id = 5),
+        GridItem("Semi-Govt", Icons.Default.AccountBalance, Color(0xFF009688), id = 6),
+        GridItem("Mandi System", Icons.Default.Agriculture, Color(0xFF795548), id = 7),
+        GridItem("Quick\nCommerce", Icons.Default.LocalShipping, Color(0xFF2196F3), id = 8)
     )
 
     GridSection(items) { item ->
-        navController.navigate("category_detail/${Uri.encode(item.name)}")
+        val safeName = item.name.replace("\n", " ") // Removes the line break for a clean title
+        navController.navigate("jobList/${item.id}/${Uri.encode(safeName)}")
     }
 }
 
