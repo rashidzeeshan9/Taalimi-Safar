@@ -3,7 +3,6 @@ package com.example.taalimisafar.data.model
 data class Job(
     val id: Int,
 
-    // --- Basic Details ---
     val title: String?,
     val organization_name: String?,
     val organization_logo: String?,

@@ -1,5 +1,6 @@
 package com.example.taalimisafar.ui.screens
 
+import ads_mobile_sdk.id
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,7 +73,6 @@ fun CategoryScreen(
     }
 }
 
-// Data class supporting English, Hindi, and Urdu
 data class GridItem(
     val name: String,
     val nameHi: String? = null,
@@ -88,7 +88,6 @@ fun GridSection(
     items: List<GridItem>,
     onItemClick: ((GridItem) -> Unit)? = null
 ) {
-    // Fetch current language globally
     val currentLanguage = LanguageManager.currentLanguage.value
 
     LazyVerticalGrid(
@@ -100,7 +99,7 @@ fun GridSection(
     ) {
         items(items) { item ->
 
-            // Determine which translation to show based on App settings
+            // translation to show based on App settings
             val transText = when (currentLanguage) {
                 AppLanguage.HINDI -> item.nameHi
                 AppLanguage.URDU -> item.nameUr
@@ -113,7 +112,7 @@ fun GridSection(
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(155.dp) // Height expanded slightly to fit dual text nicely
+                    .height(155.dp)
                     .clickable {
                         onItemClick?.invoke(item)
                     }
@@ -171,9 +170,6 @@ fun GridSection(
         }
     }
 }
-
-/* ---------------- ALL SECTIONS (100% TRANSLATED) ---------------- */
-
 @Composable
 fun AcademicSection(navController: NavController) {
     val items = listOf(
@@ -186,18 +182,21 @@ fun AcademicSection(navController: NavController) {
     )
     GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
 }
-
 @Composable
 fun DiplomaSection(navController: NavController) {
     val items = listOf(
-        GridItem("Health Care", "स्वास्थ्य देखभाल", "صحت کی دیکھ بھال", Icons.Default.HealthAndSafety, Color(0xFFE53935)),
-        GridItem("Trade Diploma", "ट्रेड डिप्लोमा", "ٹریڈ ڈپلومہ", Icons.Default.Business, Color(0xFFFB8C00)),
-        GridItem("Vocational Diploma", "व्यावसायिक डिप्लोमा", "پیشہ ورانہ ڈپلومہ", Icons.Default.Work, Color(0xFF43A047)),
-        GridItem("Technical Diploma", "तकनीकी डिप्लोमा", "تکنیکی ڈپلومہ", Icons.Default.Computer, Color(0xFF1E88E5)),
-        GridItem("Professional Diplomas", "पेशेवर डिप्लोमा", "پیشہ ورانہ ڈپلومہ", Icons.Default.AccountBalance, Color(0xFF8E24AA)),
-        GridItem("International Diplomas", "अंतर्राष्ट्रीय डिप्लोमा", "بین الاقوامی ڈپلومہ", Icons.Default.Public, Color(0xFF009688))
+        GridItem("Health Care", "स्वास्थ्य देखभाल", "صحت کی دیکھ بھال", Icons.Default.HealthAndSafety, Color(0xFFE53935),
+            id = 1),
+        GridItem("Trade Diploma", "ट्रेड डिप्लोमा", "ٹریڈ ڈپلومہ", Icons.Default.Business, Color(0xFFFB8C00), id=2),
+        GridItem("Vocational Diploma", "व्यावसायिक डिप्लोमा", "پیشہ ورانہ ڈپلومہ", Icons.Default.Work, Color(0xFF43A047), id = 3),
+        GridItem("Technical Diploma", "तकनीकी डिप्लोमा", "تکنیکی ڈپلومہ", Icons.Default.Computer, Color(0xFF1E88E5), id = 4),
+        GridItem("Professional Diplomas", "पेशेवर डिप्लोमा", "پیشہ ورانہ ڈپلومہ", Icons.Default.AccountBalance, Color(0xFF8E24AA), id = 5),
+        GridItem("International Diplomas", "अंतर्राष्ट्रीय डिप्लोमा", "بین الاقوامی ڈپلومہ", Icons.Default.Public, Color(0xFF009688), id = 6)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("diploma_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
 
 @Composable
@@ -216,21 +215,23 @@ fun InternshipSection(navController: NavController) {
         navController.navigate("internship_list/${item.id}/${Uri.encode(safeName)}")
     }
 }
-
 @Composable
 fun SkillDevelopmentSection(navController: NavController) {
     val items = listOf(
-        GridItem("Soft Skill -\nProblem-Solving", "समस्या समाधान", "مسئلہ حل کرنا", Icons.Default.Lightbulb, Color(0xFFFFC107)),
-        GridItem("Daily Life\nSkills", "दैनिक जीवन कौशल", "روزمرہ زندگی کی مہارتیں", Icons.Default.Chat, Color(0xFF2196F3)),
-        GridItem("Interpersonal &\nSocial Skills", "सामाजिक कौशल", "سماجی مہارتیں", Icons.Default.Groups, Color(0xFFE91E63)),
-        GridItem("Leadership &\nInfluence", "नेतृत्व और प्रभाव", "قیادت اور اثر و رسوخ", Icons.Default.Campaign, Color(0xFFFF5722)),
-        GridItem("Computer\nSkills", "कंप्यूटर कौशल", "کمپیوٹر کی مہارتیں", Icons.Default.Computer, Color(0xFF00BCD4)),
-        GridItem("Communication\nEnglish", "संचार अंग्रेजी", "مواصلاتی انگریزی", Icons.Default.Translate, Color(0xFF673AB7)),
-        GridItem("Skilled Manual\nWork", "कुशल शारीरिक कार्य", "ہنر مند دستی کام", Icons.Default.Build, Color(0xFF795548))
+        // Added the correct 'id' to each of these so the API knows what to fetch!
+        GridItem("Soft Skill -\nProblem-Solving", "समस्या समाधान", "مسئلہ حل کرنا", Icons.Default.Lightbulb, Color(0xFFFFC107), id = 1),
+        GridItem("Daily Life\nSkills", "दैनिक जीवन कौशल", "روزمرہ زندگی کی مہارتیں", Icons.Default.Chat, Color(0xFF2196F3), id = 2),
+        GridItem("Interpersonal &\nSocial Skills", "सामाजिक कौशल", "سماجی مہارتیں", Icons.Default.Groups, Color(0xFFE91E63), id = 3),
+        GridItem("Leadership &\nInfluence", "नेतृत्व और प्रभाव", "قیادت اور اثر و رسوخ", Icons.Default.Campaign, Color(0xFFFF5722), id = 4),
+        GridItem("Computer\nSkills", "कंप्यूटर कौशल", "کمپیوٹر کی مہارتیں", Icons.Default.Computer, Color(0xFF00BCD4), id = 5),
+        GridItem("Communication\nEnglish", "संचार अंग्रेजी", "مواصلاتی انگریزی", Icons.Default.Translate, Color(0xFF673AB7), id = 6),
+        GridItem("Skilled Manual\nWork", "कुशल शारीरिक कार्य", "ہنر مند دستی کام", Icons.Default.Build, Color(0xFF795548), id = 7)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("skill_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
-
 @Composable
 fun WomenEmpowermentSection(navController: NavController) {
     val items = listOf(
@@ -327,16 +328,19 @@ fun CareerIndustrySection(navController: NavController) {
 @Composable
 fun ReligiousStudiesSection(navController: NavController) {
     val items = listOf(
-        GridItem("Hindu", "हिंदू", "ہندو", Icons.Default.TempleHindu, Color(0xFFE91E63), route = "religious_studies_detail/${Uri.encode("Hindu")}"),
-        GridItem("Muslim", "मुस्लिम", "مسلم", Icons.Default.Mosque, Color(0xFF1E88E5), route = "religious_studies_detail/${Uri.encode("Muslim")}"),
-        GridItem("Sikhism", "सिख धर्म", "سکھ مت", Icons.Default.TempleBuddhist, Color(0xFFFFC107), route = "religious_studies_detail/${Uri.encode("Sikhism")}"),
-        GridItem("Christianity", "ईसाई धर्म", "عیسائیت", Icons.Default.Church, Color(0xFF3F51B5), route = "religious_studies_detail/${Uri.encode("Christianity")}"),
-        GridItem("Buddhists", "बौद्ध", "بدھ مت", Icons.Default.SelfImprovement, Color(0xFF4CAF50), route = "religious_studies_detail/${Uri.encode("Buddhists")}"),
-        GridItem("Jain", "जैन", "جین", Icons.Default.Spa, Color(0xFF9C27B0), route = "religious_studies_detail/${Uri.encode("Jain")}"),
-        GridItem("Parsi", "पारसी", "پارسی", Icons.Default.LocalFireDepartment, Color(0xFFFF7043), route = "religious_studies_detail/${Uri.encode("Parsi")}"),
-        GridItem("Adivasi\nReligions", "आदिवासी धर्म", "آدیواسی مذاہب", Icons.Default.Groups, Color(0xFF00695C), route = "religious_studies_detail/${Uri.encode("Adivasi Religions")}")
+        GridItem("Muslim", "मुस्लिम", "مسلم", Icons.Default.Mosque, Color(0xFF1E88E5), id = 1),
+        GridItem("Hindu", "हिंदू", "ہندو", Icons.Default.TempleHindu, Color(0xFFE91E63), id = 2),
+        GridItem("Sikhism", "सिख धर्म", "سکھ مت", Icons.Default.TempleBuddhist, Color(0xFFFFC107), id = 3),
+        GridItem("Christianity", "ईसाई धर्म", "عیسائیت", Icons.Default.Church, Color(0xFF3F51B5), id = 4),
+        GridItem("Buddhists", "बौद्ध", "بدھ مت", Icons.Default.SelfImprovement, Color(0xFF4CAF50), id = 5),
+        GridItem("Jain", "जैन", "جین", Icons.Default.Spa, Color(0xFF9C27B0), id = 6),
+        GridItem("Parsi", "पारसी", "پارسی", Icons.Default.LocalFireDepartment, Color(0xFFFF7043), id = 7),
+        GridItem("Adivasi Religions", "आदिवासी धर्म", "آدیواسی مذاہب", Icons.Default.Groups, Color(0xFF00695C), id = 8)
     )
-    GridSection(items) { item -> item.route?.let { navController.navigate(it) } }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("religious_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

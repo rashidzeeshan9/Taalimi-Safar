@@ -58,8 +58,6 @@ fun QuoteScreen(
         )
     }
 }
-
-// 2. The Interactive UI Content
 @Composable
 fun QuoteScreenContent(
     quote: Quote,
@@ -68,10 +66,9 @@ fun QuoteScreenContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            // DESIGN UPGRADE: Subtle Gradient Background
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFFFDFBF7), Color(0xFFF3E5F5)) // Cream to Light Lavender
+                    colors = listOf(Color(0xFFF8FAFC), Color(0xFFE2E8F0)) // Clean Modern Grey
                 )
             )
     ) {
@@ -84,8 +81,8 @@ fun QuoteScreenContent(
         ) {
             // --- DECORATIVE QUOTE CARD ---
             Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -98,7 +95,7 @@ fun QuoteScreenContent(
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
-                        color = Color(0xFF263238),
+                        color = Color(0xFF1E293B),
                         lineHeight = 32.sp
                     )
 
@@ -107,7 +104,7 @@ fun QuoteScreenContent(
                     Text(
                         text = "- ${quote.author}",
                         fontStyle = FontStyle.Italic,
-                        color = Color.Gray,
+                        color = Color(0xFF64748B),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -117,10 +114,10 @@ fun QuoteScreenContent(
 
             // --- LANGUAGE SELECTION ---
             Text(
-                text = "Choose your Secondary language",
+                text = "Choose your Medium of Study",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF546E7A),
-                fontWeight = FontWeight.Medium
+                color = Color(0xFF334155),
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -129,29 +126,29 @@ fun QuoteScreenContent(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                // HINDI CARD (Orange + Book Icon)
+                // HINDI CARD (Royal Blue - Trust & Education)
                 InteractiveLanguageCard(
                     englishName = "Hindi",
                     nativeName = "हिंदी",
                     icon = Icons.AutoMirrored.Filled.MenuBook,
-                    color1 = Color(0xFFEF6C00),
-                    color2 = Color(0xFFFF9800),
+                    color1 = Color(0xFF2563EB), // Vibrant Blue
+                    color2 = Color(0xFF1E40AF), // Deep Royal Blue
                     onClick = { onLanguageSelected(AppLanguage.HINDI) }
                 )
 
+                // URDU CARD (Deep Berry/Maroon - Prestige & Neutrality)
                 InteractiveLanguageCard(
                     englishName = "Urdu",
                     nativeName = "اردو",
                     icon = Icons.Default.Edit,
-                    color1 = Color(0xFF00695C),
-                    color2 = Color(0xFF26A69A),
+                    color1 = Color(0xFFBE123C), // Vibrant Rose/Berry
+                    color2 = Color(0xFF881337), // Deep Maroon
                     onClick = { onLanguageSelected(AppLanguage.URDU) }
                 )
             }
         }
     }
 }
-
 // 3. Interactive Card Component with Animation
 @Composable
 fun InteractiveLanguageCard(

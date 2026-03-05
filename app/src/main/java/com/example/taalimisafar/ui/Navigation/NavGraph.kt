@@ -1,8 +1,10 @@
 package com.example.taalimisafar.ui.Navigation
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,20 +25,31 @@ import com.example.taalimisafar.ui.internships.InternshipListScreen
 import com.example.taalimisafar.ui.internships.InternshipDetailScreen
 import com.example.taalimisafar.ui.jobs.JobDetailScreen
 import com.example.taalimisafar.ui.jobs.JobListScreen
+import com.example.taalimisafar.ui.skills.SkillDetailScreen
+import com.example.taalimisafar.ui.skills.SkillListScreen
+import com.example.taalimisafar.ui.religious.ReligiousDetailScreen
+import com.example.taalimisafar.ui.religious.ReligiousListScreen
+
 import com.example.taalimisafar.viewmodel.InternshipViewModel
 import com.example.taalimisafar.viewmodel.JobViewModel
-
+import com.example.taalimisafar.viewmodel.SkillViewModel
+import com.example.taalimisafar.viewmodel.ReligiousViewModel
+import com.example.taalimisafar.viewmodel.DiplomaViewModel
 @Composable
 fun NavGraph(
     isDarkTheme: Boolean,
     onThemeToggle: () -> Unit
 ) {
     val navController = rememberNavController()
-    val scholarshipViewModel: ScholarshipViewModel = viewModel()
+    val context = LocalContext.current
 
-    // Shared ViewModels
+    //ViewModels
+    val scholarshipViewModel: ScholarshipViewModel = viewModel()
     val internshipViewModel: InternshipViewModel = viewModel()
-    val jobViewModel: JobViewModel = viewModel() // 👈 ADDED THIS BACK HERE!
+    val jobViewModel: JobViewModel = viewModel()
+    val skillViewModel: SkillViewModel = viewModel()
+    val religiousViewModel: ReligiousViewModel = viewModel()
+    val diplomaViewModel: DiplomaViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -106,7 +119,6 @@ fun NavGraph(
                 categoryName = categoryName,
                 viewModel = internshipViewModel,
                 onBackClick = { navController.popBackStack() },
-                // 👇 This line is now perfectly fixed!
                 onInternshipClick = { internshipId -> navController.navigate("internship_detail/$internshipId") }
             )
         }
@@ -123,8 +135,10 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() }
             )
         }
+
         composable(route = "category_detail/{title}", arguments = listOf(navArgument("title") { type = NavType.StringType })) { backStackEntry -> SimpleDetailScreen(navController = navController, title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")) }
         composable(route = "career_industry_detail/{title}", arguments = listOf(navArgument("title") { type = NavType.StringType })) { backStackEntry -> SimpleDetailScreen(navController = navController, title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")) }
+        // We can safely leave the old religious placeholder route here just in case, but your CategoryScreen now uses religious_list
         composable(route = "religious_studies_detail/{title}", arguments = listOf(navArgument("title") { type = NavType.StringType })) { backStackEntry -> SimpleDetailScreen(navController = navController, title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")) }
         composable(route = "education_board_detail/{title}", arguments = listOf(navArgument("title") { type = NavType.StringType })) { backStackEntry -> SimpleDetailScreen(navController = navController, title = Uri.decode(backStackEntry.arguments?.getString("title") ?: "")) }
 
@@ -152,15 +166,123 @@ fun NavGraph(
 
         composable(
             route = "jobDetail/{jobId}",
-            arguments = listOf(
-                navArgument("jobId") { type = NavType.IntType }
-            )
+            arguments = listOf(navArgument("jobId") { type = NavType.IntType })
         ) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getInt("jobId") ?: 0
 
             JobDetailScreen(
                 jobId = jobId,
                 viewModel = jobViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // --- SKILL DEVELOPMENT ROUTES ---
+        composable(
+            route = "skill_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Skills")
+
+            SkillListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = skillViewModel,
+                onBackClick = { navController.popBackStack() },
+                onProgramClick = { programId ->
+                    navController.navigate("skill_detail/$programId")
+                }
+            )
+        }
+
+        composable(
+            route = "skill_detail/{programId}",
+            arguments = listOf(navArgument("programId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val programId = backStackEntry.arguments?.getInt("programId") ?: 0
+
+            SkillDetailScreen(
+                programId = programId,
+                viewModel = skillViewModel,
+                onBackClick = { navController.popBackStack() },
+                onEnrollClick = { url ->
+                    if (url.isNotBlank()) {
+                        val fullUrl = if (!url.startsWith("http")) "https://$url" else url
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl)))
+                    }
+                }
+            )
+        }
+
+        // --- RELIGIOUS STUDIES ROUTES (NEW) ---
+        composable(
+            route = "religious_list/{religionId}/{religionName}",
+            arguments = listOf(
+                navArgument("religionId") { type = NavType.IntType },
+                navArgument("religionName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val religionId = backStackEntry.arguments?.getInt("religionId") ?: 0
+            val religionName = Uri.decode(backStackEntry.arguments?.getString("religionName") ?: "Programs")
+
+            ReligiousListScreen(
+                religionId = religionId,
+                religionName = religionName,
+                viewModel = religiousViewModel,
+                onBackClick = { navController.popBackStack() },
+                onProgramClick = { programId ->
+                    navController.navigate("religious_detail/$programId")
+                }
+            )
+        }
+
+        composable(
+            route = "religious_detail/{programId}",
+            arguments = listOf(navArgument("programId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val programId = backStackEntry.arguments?.getInt("programId") ?: 0
+
+            ReligiousDetailScreen(
+                programId = programId,
+                viewModel = religiousViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        // --- DIPLOMA ROUTES ---
+        composable(
+            route = "diploma_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Diplomas")
+
+            com.example.taalimisafar.ui.diplomas.DiplomaListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = diplomaViewModel,
+                onBackClick = { navController.popBackStack() },
+                onProgramClick = { programId ->
+                    navController.navigate("diploma_detail/$programId")
+                }
+            )
+        }
+
+        composable(
+            route = "diploma_detail/{programId}",
+            arguments = listOf(navArgument("programId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val programId = backStackEntry.arguments?.getInt("programId") ?: 0
+
+            com.example.taalimisafar.ui.diplomas.DiplomaDetailScreen(
+                programId = programId,
+                viewModel = diplomaViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
