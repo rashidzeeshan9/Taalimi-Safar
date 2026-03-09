@@ -10,6 +10,8 @@ import com.example.taalimisafar.data.model.ScholarshipCategory
 import com.example.taalimisafar.data.model.ScholarshipType
 import com.example.taalimisafar.data.model.Job
 import com.example.taalimisafar.data.model.ReligiousProgram
+import com.example.taalimisafar.data.model.Schemes
+import com.example.taalimisafar.data.model.SchemesCategory
 import com.example.taalimisafar.data.model.SkillProgram
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -89,4 +91,19 @@ interface ApiService {
     suspend fun getDiplomaProgramDetail(
         @Path("id") programId: Int
     ): DiplomaProgram
+
+
+    @GET("api/scheme-categories")
+    suspend fun getSchemeCategories(): List<SchemesCategory>
+
+    @GET("api/schemes/")
+    suspend fun getSchemes(
+        @Query("category") categoryId: Int? = null,
+        @Query("status") status: String? = "Active"
+    ): List<Schemes>
+
+    @GET("api/schemes/{id}/")
+    suspend fun getSchemeDetail(
+        @Path("id") id: Int
+    ): Schemes
 }

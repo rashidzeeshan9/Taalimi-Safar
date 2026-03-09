@@ -298,16 +298,18 @@ fun PrivateJobsSection(navController: NavController) {
 @Composable
 fun GovtSchemesSection(navController: NavController) {
     val items = listOf(
-        GridItem("State Govt", "राज्य सरकार", "ریاستی حکومت", Icons.Default.AccountBalance, Color(0xFF1E88E5)),
-        GridItem("Central Government\nschemes", "केंद्र सरकार योजनाएं", "مرکزی حکومت کی اسکیمیں", Icons.Default.AccountBalance, Color(0xFF43A047)),
-        GridItem("Tourism\nDevelopment", "पर्यटन विकास", "سیاحت کی ترقی", Icons.Default.TravelExplore, Color(0xFFFF9800)),
-        GridItem("PSU Schemes", "पीएसयू योजनाएं", "پی ایس یو اسکیمیں", Icons.Default.Factory, Color(0xFFE53935)),
-        GridItem("Private NGO\nSchemes", "निजी एनजीओ योजनाएं", "نجی این جی او اسکیمیں", Icons.Default.VolunteerActivism, Color(0xFF9C27B0)),
-        GridItem("International\nSchemes", "अंतर्राष्ट्रीय योजनाएं", "بین الاقوامی اسکیمیں", Icons.Default.Public, Color(0xFF009688)),
-        GridItem("United Nations\nProgrammes", "संयुक्त राष्ट्र कार्यक्रम", "اقوام متحدہ کے پروگرام", Icons.Default.Groups, Color(0xFF3F51B5)),
-        GridItem("WHO\nProgrammes", "डब्ल्यूएचओ कार्यक्रम", "ڈبلیو ایچ او پروگرام", Icons.Default.HealthAndSafety, Color(0xFF795548))
+        GridItem("State Govt", "राज्य सरकार", "ریاستی حکومت", Icons.Default.AccountBalance, Color(0xFF1E88E5), id = 1),
+        GridItem("Central Government\nschemes", "केंद्र सरकार योजनाएं", "مرکزی حکومت کی اسکیمیں", Icons.Default.AccountBalance, Color(0xFF43A047), id =2),
+        GridItem("Tourism\nDevelopment", "पर्यटन विकास", "سیاحت کی ترقی", Icons.Default.TravelExplore, Color(0xFFFF9800), id = 3),
+        GridItem("PSU Schemes", "पीएसयू योजनाएं", "پی ایس یو اسکیمیں", Icons.Default.Factory, Color(0xFFE53935), id = 4),
+        GridItem("Private NGO\nSchemes", "निजी एनजीओ योजनाएं", "نجی این جی او اسکیمیں", Icons.Default.VolunteerActivism, Color(0xFF9C27B0), id =5),
+        GridItem("International\nSchemes", "अंतर्राष्ट्रीय योजनाएं", "بین الاقوامی اسکیمیں", Icons.Default.Public, Color(0xFF009688), id =6),
+        GridItem("United Nations\nProgrammes", "संयुक्त राष्ट्र कार्यक्रम", "اقوام متحدہ کے پروگرام", Icons.Default.Groups, Color(0xFF3F51B5), id = 7),
+        GridItem("WHO\nProgrammes", "डब्ल्यूएचओ कार्यक्रम", "ڈبلیو ایچ او پروگرام", Icons.Default.HealthAndSafety, Color(0xFF795548), id =8)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+            navController.navigate("scheme_list/${item.id}/${Uri.encode(safeName)}") }
 }
 
 @Composable
