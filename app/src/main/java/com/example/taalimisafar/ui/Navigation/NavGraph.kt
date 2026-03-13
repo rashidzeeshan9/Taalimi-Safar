@@ -42,7 +42,11 @@ import com.example.taalimisafar.viewmodel.ScholarshipViewModel
 import com.example.taalimisafar.viewmodel.SkillViewModel
 import com.example.taalimisafar.viewmodel.ReligiousViewModel
 import com.example.taalimisafar.viewmodel.DiplomaViewModel
+import com.example.taalimisafar.viewmodel.AcademicViewModel
 import com.example.taalimisafar.viewmodel.SchemeViewModel // NEW
+
+import com.example.taalimisafar.ui.academic.AcademicListScreen
+import com.example.taalimisafar.ui.academic.AcademicDetailScreen
 
 @Composable
 fun NavGraph(
@@ -59,6 +63,7 @@ fun NavGraph(
     val skillViewModel: SkillViewModel = viewModel()
     val religiousViewModel: ReligiousViewModel = viewModel()
     val diplomaViewModel: DiplomaViewModel = viewModel()
+    val academicViewModel: AcademicViewModel = viewModel()
     val schemeViewModel: SchemeViewModel = viewModel() // NEW
 
     NavHost(
@@ -97,7 +102,13 @@ fun NavGraph(
         composable("scholarship_detail") { ScholarshipDetailScreen(navController = navController, viewModel = scholarshipViewModel) }
 
         // --- STATIC CATEGORY ROUTES ---
-        composable("academic") { com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Academic", "academic") }
+        composable("academic") {
+            com.example.taalimisafar.ui.screens.CategoryScreen(
+                navController = navController,
+                categoryTitle = "Academic",
+                categoryId = "academic"
+            )
+        }
         composable("diploma") { com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Diploma", "diploma") }
         composable("women") { com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Women Empowerment", "women") }
         composable("internships") { com.example.taalimisafar.ui.screens.CategoryScreen(navController, "Internships", "internships") }
@@ -344,6 +355,39 @@ fun NavGraph(
             com.example.taalimisafar.ui.diplomas.DiplomaDetailScreen(
                 programId = programId,
                 viewModel = diplomaViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // --- ACADEMIC (STREAMS / COURSES) ROUTES ---
+        composable(
+            route = "academic_list/{streamId}/{streamName}",
+            arguments = listOf(
+                navArgument("streamId") { type = NavType.IntType },
+                navArgument("streamName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val streamId = backStackEntry.arguments?.getInt("streamId") ?: 0
+            val streamName = Uri.decode(backStackEntry.arguments?.getString("streamName") ?: "Courses")
+
+            AcademicListScreen(
+                streamId = streamId,
+                streamName = streamName,
+                viewModel = academicViewModel,
+                onBackClick = { navController.popBackStack() },
+                onCourseClick = { courseId -> navController.navigate("academic_detail/$courseId") }
+            )
+        }
+
+        composable(
+            route = "academic_detail/{courseId}",
+            arguments = listOf(navArgument("courseId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+
+            AcademicDetailScreen(
+                courseId = courseId,
+                viewModel = academicViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }

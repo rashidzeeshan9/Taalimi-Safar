@@ -173,14 +173,17 @@ fun GridSection(
 @Composable
 fun AcademicSection(navController: NavController) {
     val items = listOf(
-        GridItem("Art", "कला", "فن", Icons.Default.Brush, Color(0xFFE91E63)),
-        GridItem("Commerce", "वाणिज्य", "کامرس", Icons.Default.ShoppingCart, Color(0xFF4CAF50)),
-        GridItem("IT", "आईटी (सूचना प्रौद्योगिकी)", "آئی ٹی", Icons.Default.Computer, Color(0xFF2196F3)),
-        GridItem("Judicial - Court", "न्यायिक - न्यायालय", "عدالتی - عدالت", Icons.Default.Gavel, Color(0xFF9C27B0)),
-        GridItem("Science", "विज्ञान", "سائنس", Icons.Default.Science, Color(0xFFFF9800)),
-        GridItem("Vocational/\nSkill-based", "व्यावसायिक/कौशल", "پیشہ ورانہ/مہارت", Icons.Default.Work, Color(0xFF009688))
+        GridItem("Art", "कला", "فن", Icons.Default.Brush, Color(0xFFE91E63), id = 1),
+        GridItem("Commerce", "वाणिज्य", "کامرس", Icons.Default.ShoppingCart, Color(0xFF4CAF50), id = 2),
+        GridItem("IT", "आईटी (सूचना प्रौद्योगिकी)", "آئی ٹی", Icons.Default.Computer, Color(0xFF2196F3), id = 3),
+        GridItem("Judicial - Court", "न्यायिक - न्यायालय", "عدالتی - عدالت", Icons.Default.Gavel, Color(0xFF9C27B0), id = 4),
+        GridItem("Science", "विज्ञान", "سائنس", Icons.Default.Science, Color(0xFFFF9800), id = 5),
+        GridItem("Vocational/\nSkill-based", "व्यावसायिक/कौशल", "پیشہ ورانہ/مہارت", Icons.Default.Work, Color(0xFF009688), id = 6)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("academic_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
 @Composable
 fun DiplomaSection(navController: NavController) {

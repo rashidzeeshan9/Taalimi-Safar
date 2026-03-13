@@ -13,6 +13,7 @@ import com.example.taalimisafar.data.model.ReligiousProgram
 import com.example.taalimisafar.data.model.Schemes
 import com.example.taalimisafar.data.model.SchemesCategory
 import com.example.taalimisafar.data.model.SkillProgram
+import com.example.taalimisafar.data.model.Stream
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -106,4 +107,31 @@ interface ApiService {
     suspend fun getSchemeDetail(
         @Path("id") id: Int
     ): Schemes
+    // ----------------------------
+// STREAMS
+// ----------------------------
+
+    @GET("api/streams/")
+    suspend fun getStreams(): List<Stream>
+
+
+// ----------------------------
+// COURSES BY STREAM
+// ----------------------------
+
+    @GET("api/courses/")
+    suspend fun getCourses(
+        @Query("stream") streamId: Int
+    ): List<Course>
+
+
+// ----------------------------
+// COURSE DETAIL
+// ----------------------------
+
+    @GET("api/courses/{id}/")
+    suspend fun getCourseDetail(
+        @Path("id") courseId: Int
+    ): Course
+
 }
