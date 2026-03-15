@@ -146,11 +146,11 @@ fun AcademicCourseCard(
     lang: AppLanguage,
     onClick: (Course) -> Unit
 ) {
-
-    val title = when (lang) {
-        AppLanguage.HINDI -> course.courseName_hi ?: course.courseName
-        AppLanguage.URDU -> course.courseName_ur ?: course.courseName
-        else -> course.courseName
+    // Like Diploma: always show English first, then Hindi/Urdu below when that language is opted
+    val transTitle = when (lang) {
+        AppLanguage.HINDI -> course.courseName_hi
+        AppLanguage.URDU -> course.courseName_ur
+        else -> null
     }
 
     Card(
@@ -188,28 +188,22 @@ fun AcademicCourseCard(
 
             Column(modifier = Modifier.weight(1f)) {
 
+                // English course name (always shown)
                 Text(
-                    text = title ?: "",
+                    text = course.courseName,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1E293B)
                 )
 
-                if (!course.courseName.isBlank()) {
-                    val transTitle = when (lang) {
-                        AppLanguage.HINDI -> course.courseName_hi
-                        AppLanguage.URDU -> course.courseName_ur
-                        else -> null
-                    }
-
-                    if (!transTitle.isNullOrBlank() && transTitle != course.courseName) {
-                        Text(
-                            text = transTitle,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF4F46E5)
-                        )
-                    }
+                // Hindi or Urdu below when that language is selected (like Diploma)
+                if (!transTitle.isNullOrBlank() && transTitle != course.courseName) {
+                    Text(
+                        text = transTitle,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF4F46E5)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
