@@ -3,6 +3,8 @@ package com.example.taalimisafar.data.remote
 import com.example.taalimisafar.data.model.Quote
 import com.example.taalimisafar.data.model.Course
 import com.example.taalimisafar.data.model.DiplomaProgram
+import com.example.taalimisafar.data.model.IndustryCategory
+import com.example.taalimisafar.data.model.IndustryProgram
 import com.example.taalimisafar.data.model.Internship
 import com.example.taalimisafar.data.model.InternshipCategory
 import com.example.taalimisafar.data.model.Scholarship
@@ -134,4 +136,20 @@ interface ApiService {
         @Path("id") courseId: Int
     ): Course
 
+
+    // === INDUSTRY & CAREER ENDPOINTS ===
+    @GET("api/industry-categories/")
+    suspend fun getIndustryCategories(): List<IndustryCategory>
+
+    @GET("api/industry-programs/")
+    suspend fun getIndustryPrograms(
+        @Query("category") categoryId: Int? = null,
+        @Query("demand_level") demandLevel: String? = null,
+        @Query("is_featured") isFeatured: Boolean? = null
+    ): List<IndustryProgram>
+
+    @GET("api/industry-programs/{id}/")
+    suspend fun getIndustryProgramDetail(
+        @Path("id") id: Int
+    ): IndustryProgram
 }

@@ -318,16 +318,19 @@ fun GovtSchemesSection(navController: NavController) {
 @Composable
 fun CareerIndustrySection(navController: NavController) {
     val items = listOf(
-        GridItem("Aviation Industry", "विमानन उद्योग", "ایوی ایشن انڈسٹری", Icons.Default.Flight, Color(0xFF1E88E5), route = "career_industry_detail/${Uri.encode("Aviation Industry")}"),
-        GridItem("Hospitality Industry", "आतिथ्य उद्योग", "مہمان نوازی کی صنعت", Icons.Default.Hotel, Color(0xFFE53935), route = "career_industry_detail/${Uri.encode("Hospitality Industry")}"),
-        GridItem("Real Estate Industry", "रियल एस्टेट उद्योग", "رئیل اسٹیٹ انڈسٹری", Icons.Default.LocationCity, Color(0xFF6D4C41), route = "career_industry_detail/${Uri.encode("Real Estate Industry")}"),
-        GridItem("Automobile Industry", "ऑटोमोबाइल उद्योग", "آٹوموبائل انڈسٹری", Icons.Default.DirectionsCar, Color(0xFF00897B), route = "career_industry_detail/${Uri.encode("Automobile Industry")}"),
-        GridItem("Telecommunications\nIndustry", "दूरसंचार उद्योग", "ٹیلی کمیونیکیشن انڈسٹری", Icons.Default.PhoneAndroid, Color(0xFF3949AB), route = "career_industry_detail/${Uri.encode("Telecommunications Industry")}"),
-        GridItem("Retail &\nE-commerce", "खुदरा और ई-कॉमर्स", "ریٹیل اور ای کامرس", Icons.Default.ShoppingCart, Color(0xFFF57C00), route = "career_industry_detail/${Uri.encode("Retail & E-commerce")}"),
-        GridItem("Career in Sports", "खेलों में करियर", "کھیلوں میں کیریئر", Icons.Default.SportsSoccer, Color(0xFFFF5722), route = "career_industry_detail/${Uri.encode("Career in Sports")}"),
-        GridItem("Agriculture &\nFood", "कृषि और भोजन", "زراعت اور خوراک", Icons.Default.Agriculture, Color(0xFF43A047), route = "career_industry_detail/${Uri.encode("Agriculture & Food")}")
+        GridItem("Aviation Industry", "विमानन उद्योग", "ایوی ایشن انڈسٹری", Icons.Default.Flight, Color(0xFF1E88E5), id = 1),
+        GridItem("Hospitality Industry", "आतिथ्य उद्योग", "مہمان نوازی की صنعت", Icons.Default.Hotel, Color(0xFFE53935), id = 2),
+        GridItem("Real Estate Industry", "रियल एस्टेट उद्योग", "رئیل اسٹیٹ انڈسٹری", Icons.Default.LocationCity, Color(0xFF6D4C41), id = 3),
+        GridItem("Automobile Industry", "ऑटोमोबाइल उद्योग", "آٹوموبائل انڈسٹری", Icons.Default.DirectionsCar, Color(0xFF00897B), id = 4),
+        GridItem("Telecommunications\nIndustry", "दूरसंचार उद्योग", "ٹیلی کمیونیکیشن انڈسٹری", Icons.Default.PhoneAndroid, Color(0xFF3949AB), id = 5),
+        GridItem("Retail &\nE-commerce", "खुदरा और ई-कॉमर्स", "ریٹیل اور ای کامرس", Icons.Default.ShoppingCart, Color(0xFFF57C00), id = 6),
+        GridItem("Career in Sports", "खेलों में करियर", "کھیلوں میں کیریئر", Icons.Default.SportsSoccer, Color(0xFFFF5722), id = 7),
+        GridItem("Agriculture &\nFood", "कृषि और भोजन", "زراعت اور خوراک", Icons.Default.Agriculture, Color(0xFF43A047), id = 8)
     )
-    GridSection(items) { item -> item.route?.let { navController.navigate(it) } }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("industry_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
 
 @Composable
