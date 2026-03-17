@@ -13,29 +13,57 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+
+// --- CORE SCREENS ---
 import com.example.taalimisafar.ui.screens.MainScreen
 import com.example.taalimisafar.ui.screens.QuoteScreen
 import com.example.taalimisafar.ui.screens.SimpleDetailScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
+import com.example.taalimisafar.ui.screens.CategoryScreen
 
+// --- SCHOLARSHIPS ---
 import com.example.taalimisafar.ui.scholarships.DynamicCategoryScreen
 import com.example.taalimisafar.ui.scholarships.DynamicTypeScreen
 import com.example.taalimisafar.ui.scholarships.ScholarshipDetailScreen
 import com.example.taalimisafar.ui.scholarships.ScholarshipScreen
 
+// --- INTERNSHIPS ---
 import com.example.taalimisafar.ui.internships.InternshipListScreen
 import com.example.taalimisafar.ui.internships.InternshipDetailScreen
+
+// --- JOBS ---
 import com.example.taalimisafar.ui.jobs.JobDetailScreen
 import com.example.taalimisafar.ui.jobs.JobListScreen
+
+// --- SKILLS ---
 import com.example.taalimisafar.ui.skills.SkillDetailScreen
 import com.example.taalimisafar.ui.skills.SkillListScreen
+
+// --- RELIGIOUS STUDIES ---
 import com.example.taalimisafar.ui.religious.ReligiousDetailScreen
 import com.example.taalimisafar.ui.religious.ReligiousListScreen
 
-// --- NEW SCHEME IMPORTS ---
+// --- GOVT SCHEMES ---
 import com.example.taalimisafar.ui.schemes.SchemeListScreen
 import com.example.taalimisafar.ui.schemes.SchemeDetailScreen
 
+// --- ACADEMIC ---
+import com.example.taalimisafar.ui.academic.AcademicListScreen
+import com.example.taalimisafar.ui.academic.AcademicDetailScreen
+
+// --- DIPLOMAS ---
+import com.example.taalimisafar.ui.diplomas.DiplomaListScreen
+import com.example.taalimisafar.ui.diplomas.DiplomaDetailScreen
+
+// --- CAREER & INDUSTRY ---
+import com.example.taalimisafar.ui.CareerAndIndustry.IndustryListScreen
+import com.example.taalimisafar.ui.CareerAndIndustry.IndustryDetailScreen
+
+// --- WOMEN'S EMPOWERMENT ---
+import com.example.taalimisafar.ui.women.WomenListScreen
+import com.example.taalimisafar.ui.women.WomenDetailScreen
+
+// --- VIEW MODELS ---
 import com.example.taalimisafar.viewmodel.InternshipViewModel
 import com.example.taalimisafar.viewmodel.JobViewModel
 import com.example.taalimisafar.viewmodel.ScholarshipViewModel
@@ -43,14 +71,10 @@ import com.example.taalimisafar.viewmodel.SkillViewModel
 import com.example.taalimisafar.viewmodel.ReligiousViewModel
 import com.example.taalimisafar.viewmodel.DiplomaViewModel
 import com.example.taalimisafar.viewmodel.AcademicViewModel
-import com.example.taalimisafar.viewmodel.SchemeViewModel // NEW
-
-import com.example.taalimisafar.ui.academic.AcademicListScreen
-import com.example.taalimisafar.ui.academic.AcademicDetailScreen
-
+import com.example.taalimisafar.viewmodel.SchemeViewModel
 import com.example.taalimisafar.viewmodel.IndustryViewModel
-import com.example.taalimisafar.ui.CareerAndIndustry.IndustryListScreen
-import com.example.taalimisafar.ui.CareerAndIndustry.IndustryDetailScreen
+import com.example.taalimisafar.viewmodel.WomenViewModel
+
 @Composable
 fun NavGraph(
     isDarkTheme: Boolean,
@@ -69,6 +93,7 @@ fun NavGraph(
     val academicViewModel: AcademicViewModel = viewModel()
     val schemeViewModel: SchemeViewModel = viewModel()
     val industryViewModel: IndustryViewModel = viewModel()
+    val womenViewModel: WomenViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -84,7 +109,9 @@ fun NavGraph(
             )
         }
 
-        // --- SCHOLARSHIP ROUTES ---
+        // ==========================================
+        // SCHOLARSHIP ROUTES
+        // ==========================================
         composable("scholarship_tab") { DynamicCategoryScreen(navController = navController) }
         composable(
             route = "scholarship_type/{categoryId}/{categoryName}",
@@ -126,169 +153,26 @@ fun NavGraph(
             )
         }
 
-        // --- STATIC CATEGORY ROUTES ---
-        composable("academic") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController = navController,
-                categoryTitle = "Academic",
-                categoryId = "academic"
-            )
-        }
-        composable("diploma") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Diploma",
-                "diploma"
-            )
-        }
-        composable("women") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Women Empowerment",
-                "women"
-            )
-        }
-        composable("internships") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Internships",
-                "internships"
-            )
-        }
-        composable("skills") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Skill Development",
-                "skills"
-            )
-        }
-        composable("important_dates") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Important Dates",
-                "important_dates"
-            )
-        }
-        composable("govt_jobs") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Govt Jobs",
-                "govt_jobs"
-            )
-        }
-        composable("private_jobs") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Private Jobs",
-                "private_jobs"
-            )
-        }
-        composable("sports") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Career Industry",
-                "sports"
-            )
-        }
-        composable("hobbies") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController,
-                "Religious Studies",
-                "hobbies"
-            )
-        }
+        // ==========================================
+        // STATIC CATEGORY ROUTES (The Master Grid)
+        // ==========================================
+        composable("academic") { CategoryScreen(navController, "Academic", "academic") }
+        composable("diploma") { CategoryScreen(navController, "Diploma", "diploma") }
+        composable("internships") { CategoryScreen(navController, "Internships", "internships") }
+        composable("skills") { CategoryScreen(navController, "Skill Development", "skills") }
+        composable("important_dates") { CategoryScreen(navController, "Important Dates", "important_dates") }
+        composable("govt_jobs") { CategoryScreen(navController, "Govt Jobs", "govt_jobs") }
+        composable("private_jobs") { CategoryScreen(navController, "Private Jobs", "private_jobs") }
+        composable("sports") { CategoryScreen(navController, "Career Industry", "sports") }
+        composable("hobbies") { CategoryScreen(navController, "Religious Studies", "hobbies") }
+        composable("govt_schemes") { CategoryScreen(navController, "Govt Schemes", "govt_schemes") }
 
-// --- GOVT SCHEMES ROUTES (NEW) ---
+        // --- WOMEN EMPOWERMENT NATIVE GRID ROUTE ---
+        composable("women") { CategoryScreen(navController, "Women Empowerment", "women") }
 
-        // 1. Home screen tile clicks here -> Opens the Category Grid!
-        composable("govt_schemes") {
-            com.example.taalimisafar.ui.screens.CategoryScreen(
-                navController = navController,
-                categoryTitle = "Govt Schemes",
-                categoryId = "govt_schemes"
-            )
-        }
-
-        // 2. Grid tile clicks here -> Opens the List Screen with the correct Category!
-        composable(
-            route = "scheme_list/{categoryId}/{categoryName}",
-            arguments = listOf(
-                navArgument("categoryId") { type = NavType.IntType },
-                navArgument("categoryName") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-            val categoryName =
-                Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Schemes")
-
-            SchemeListScreen(
-                categoryId = categoryId,             // Now it has the required ID!
-                categoryName = categoryName,         // Now it has the required Name!
-                viewModel = schemeViewModel,
-                onBackClick = { navController.popBackStack() },
-                onSchemeClick = { schemeId ->
-                    navController.navigate("scheme_detail/$schemeId")
-                }
-            )
-        }
-
-        // 3. List item clicks here -> Opens the Detail Screen!
-        composable(
-            route = "scheme_detail/{schemeId}",
-            arguments = listOf(navArgument("schemeId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val schemeId = backStackEntry.arguments?.getInt("schemeId") ?: 0
-
-            LaunchedEffect(schemeId) {
-                schemeViewModel.fetchSchemeDetail(schemeId)
-            }
-
-            val selectedScheme by schemeViewModel.selectedScheme.collectAsState()
-
-            SchemeDetailScreen(
-                scheme = selectedScheme,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
-        // --- INTERNSHIP ROUTES ---
-        composable(
-            route = "internship_list/{categoryId}/{categoryName}",
-            arguments = listOf(
-                navArgument("categoryId") { type = NavType.IntType },
-                navArgument("categoryName") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-            val categoryName =
-                Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Internships")
-
-            LaunchedEffect(categoryId) {
-                internshipViewModel.fetchInternships(categoryId)
-            }
-
-            InternshipListScreen(
-                categoryId = categoryId,
-                categoryName = categoryName,
-                viewModel = internshipViewModel,
-                onBackClick = { navController.popBackStack() },
-                onInternshipClick = { internshipId -> navController.navigate("internship_detail/$internshipId") }
-            )
-        }
-
-        composable(
-            route = "internship_detail/{internshipId}",
-            arguments = listOf(navArgument("internshipId") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val internshipId = backStackEntry.arguments?.getInt("internshipId") ?: 0
-
-            InternshipDetailScreen(
-                internshipId = internshipId,
-                viewModel = internshipViewModel,
-                onBackClick = { navController.popBackStack() }
-            )
-        }
-
+        // ==========================================
+        // SIMPLE DETAIL FALLBACK ROUTES
+        // ==========================================
         composable(
             route = "category_detail/{title}",
             arguments = listOf(navArgument("title") { type = NavType.StringType })
@@ -326,7 +210,87 @@ fun NavGraph(
             )
         }
 
-        // --- JOB ROUTES ---
+        // ==========================================
+        // GOVT SCHEMES ROUTES
+        // ==========================================
+        composable(
+            route = "scheme_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Schemes")
+
+            SchemeListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = schemeViewModel,
+                onBackClick = { navController.popBackStack() },
+                onSchemeClick = { schemeId ->
+                    navController.navigate("scheme_detail/$schemeId")
+                }
+            )
+        }
+        composable(
+            route = "scheme_detail/{schemeId}",
+            arguments = listOf(navArgument("schemeId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val schemeId = backStackEntry.arguments?.getInt("schemeId") ?: 0
+
+            LaunchedEffect(schemeId) {
+                schemeViewModel.fetchSchemeDetail(schemeId)
+            }
+            val selectedScheme by schemeViewModel.selectedScheme.collectAsState()
+
+            SchemeDetailScreen(
+                scheme = selectedScheme,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // ==========================================
+        // INTERNSHIP ROUTES
+        // ==========================================
+        composable(
+            route = "internship_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Internships")
+
+            LaunchedEffect(categoryId) {
+                internshipViewModel.fetchInternships(categoryId)
+            }
+
+            InternshipListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = internshipViewModel,
+                onBackClick = { navController.popBackStack() },
+                onInternshipClick = { internshipId -> navController.navigate("internship_detail/$internshipId") }
+            )
+        }
+        composable(
+            route = "internship_detail/{internshipId}",
+            arguments = listOf(navArgument("internshipId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val internshipId = backStackEntry.arguments?.getInt("internshipId") ?: 0
+
+            InternshipDetailScreen(
+                internshipId = internshipId,
+                viewModel = internshipViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // ==========================================
+        // JOB ROUTES
+        // ==========================================
         composable(
             route = "jobList/{categoryId}/{categoryName}",
             arguments = listOf(
@@ -347,7 +311,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "jobDetail/{jobId}",
             arguments = listOf(navArgument("jobId") { type = NavType.IntType })
@@ -361,7 +324,9 @@ fun NavGraph(
             )
         }
 
-        // --- SKILL DEVELOPMENT ROUTES ---
+        // ==========================================
+        // SKILL DEVELOPMENT ROUTES
+        // ==========================================
         composable(
             route = "skill_list/{categoryId}/{categoryName}",
             arguments = listOf(
@@ -370,8 +335,7 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-            val categoryName =
-                Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Skills")
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Skills")
 
             SkillListScreen(
                 categoryId = categoryId,
@@ -383,7 +347,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "skill_detail/{programId}",
             arguments = listOf(navArgument("programId") { type = NavType.IntType })
@@ -403,7 +366,9 @@ fun NavGraph(
             )
         }
 
-        // --- RELIGIOUS STUDIES ROUTES ---
+        // ==========================================
+        // RELIGIOUS STUDIES ROUTES
+        // ==========================================
         composable(
             route = "religious_list/{religionId}/{religionName}",
             arguments = listOf(
@@ -412,8 +377,7 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val religionId = backStackEntry.arguments?.getInt("religionId") ?: 0
-            val religionName =
-                Uri.decode(backStackEntry.arguments?.getString("religionName") ?: "Programs")
+            val religionName = Uri.decode(backStackEntry.arguments?.getString("religionName") ?: "Programs")
 
             ReligiousListScreen(
                 religionId = religionId,
@@ -425,7 +389,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "religious_detail/{programId}",
             arguments = listOf(navArgument("programId") { type = NavType.IntType })
@@ -439,7 +402,9 @@ fun NavGraph(
             )
         }
 
-        // --- DIPLOMA ROUTES ---
+        // ==========================================
+        // DIPLOMA ROUTES
+        // ==========================================
         composable(
             route = "diploma_list/{categoryId}/{categoryName}",
             arguments = listOf(
@@ -448,10 +413,9 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
-            val categoryName =
-                Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Diplomas")
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Diplomas")
 
-            com.example.taalimisafar.ui.diplomas.DiplomaListScreen(
+            DiplomaListScreen(
                 categoryId = categoryId,
                 categoryName = categoryName,
                 viewModel = diplomaViewModel,
@@ -461,21 +425,22 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "diploma_detail/{programId}",
             arguments = listOf(navArgument("programId") { type = NavType.IntType })
         ) { backStackEntry ->
             val programId = backStackEntry.arguments?.getInt("programId") ?: 0
 
-            com.example.taalimisafar.ui.diplomas.DiplomaDetailScreen(
+            DiplomaDetailScreen(
                 programId = programId,
                 viewModel = diplomaViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
 
-        // --- ACADEMIC (STREAMS / COURSES) ROUTES ---
+        // ==========================================
+        // ACADEMIC (STREAMS / COURSES) ROUTES
+        // ==========================================
         composable(
             route = "academic_list/{streamId}/{streamName}",
             arguments = listOf(
@@ -484,8 +449,7 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val streamId = backStackEntry.arguments?.getInt("streamId") ?: 0
-            val streamName =
-                Uri.decode(backStackEntry.arguments?.getString("streamName") ?: "Courses")
+            val streamName = Uri.decode(backStackEntry.arguments?.getString("streamName") ?: "Courses")
 
             AcademicListScreen(
                 streamId = streamId,
@@ -495,7 +459,6 @@ fun NavGraph(
                 onCourseClick = { courseId -> navController.navigate("academic_detail/$courseId") }
             )
         }
-
         composable(
             route = "academic_detail/{courseId}",
             arguments = listOf(navArgument("courseId") { type = NavType.IntType })
@@ -508,7 +471,10 @@ fun NavGraph(
                 onBackClick = { navController.popBackStack() }
             )
         }
-        // --- CAREER & INDUSTRY ROUTES ---
+
+        // ==========================================
+        // CAREER & INDUSTRY ROUTES
+        // ==========================================
         composable(
             route = "industry_list/{categoryId}/{categoryName}",
             arguments = listOf(
@@ -529,7 +495,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "industry_detail/{programId}",
             arguments = listOf(navArgument("programId") { type = NavType.IntType })
@@ -539,7 +504,6 @@ fun NavGraph(
             LaunchedEffect(programId) {
                 industryViewModel.fetchProgramDetail(programId)
             }
-
             val selectedProgram by industryViewModel.selectedProgram.collectAsState()
 
             IndustryDetailScreen(
@@ -548,5 +512,38 @@ fun NavGraph(
             )
         }
 
+        // ==========================================
+        // WOMEN'S EMPOWERMENT ROUTES
+        // ==========================================
+        composable(
+            route = "women_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = Uri.decode(backStackEntry.arguments?.getString("categoryName") ?: "Programs")
+
+            WomenListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = womenViewModel,
+                onBackClick = { navController.popBackStack() },
+                onProgramClick = { id -> navController.navigate("women_detail/$id") }
+            )
+        }
+        composable(
+            route = "women_detail/{programId}",
+            arguments = listOf(navArgument("programId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val programId = backStackEntry.arguments?.getInt("programId") ?: 0
+
+            WomenDetailScreen(
+                programId = programId,
+                viewModel = womenViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }

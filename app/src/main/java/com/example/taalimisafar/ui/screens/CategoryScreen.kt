@@ -238,16 +238,20 @@ fun SkillDevelopmentSection(navController: NavController) {
 @Composable
 fun WomenEmpowermentSection(navController: NavController) {
     val items = listOf(
-        GridItem("Business and\nE-Commerce", "व्यापार और ई-कॉमर्स", "کاروبار اور ای کامرس", Icons.Default.ShoppingBag, Color(0xFFE91E63)),
-        GridItem("Skills", "कौशल", "مہارتیں", Icons.Default.Lightbulb, Color(0xFF9C27B0)),
-        GridItem("Mahila Govt.\nScheme", "महिला सरकारी योजना", "خواتین سرکاری اسکیم", Icons.Default.AccountBalance, Color(0xFFFB8C00)),
-        GridItem("Health - Fitness", "स्वास्थ्य - फिटनेस", "صحت - فٹنس", Icons.Default.HealthAndSafety, Color(0xFF43A047)),
-        GridItem("Domestic\nViolence", "घरेलू हिंसा", "گھریلو تشدد", Icons.Default.Security, Color(0xFFE53935)),
-        GridItem("Art & Craft", "कला और शिल्प", "آرٹ اور کرافٹ", Icons.Default.Brush, Color(0xFF3F51B5))
+        // Added the required 'id' to each GridItem so it can fetch the right programs from Django
+        GridItem("Business and\nE-Commerce", "व्यापार और ई-कॉमर्स", "کاروبار اور ای کامرس", Icons.Default.ShoppingBag, Color(0xFFE91E63), id = 1),
+        GridItem("Skills", "कौशल", "مہارتیں", Icons.Default.Lightbulb, Color(0xFF9C27B0), id = 2),
+        GridItem("Mahila Govt.\nScheme", "महिला सरकारी योजना", "خواتین سرکاری اسکیم", Icons.Default.AccountBalance, Color(0xFFFB8C00), id = 3),
+        GridItem("Health - Fitness", "स्वास्थ्य - फिटनेस", "صحت - فٹنس", Icons.Default.HealthAndSafety, Color(0xFF43A047), id = 4),
+        GridItem("Domestic\nViolence", "घरेलू हिंसा", "گھریلو تشدد", Icons.Default.Security, Color(0xFFE53935), id = 5),
+        GridItem("Art & Craft", "कला और शिल्प", "آرٹ اور کرافٹ", Icons.Default.Brush, Color(0xFF3F51B5), id = 6)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        // Formats the name and sends the ID to the WomenListScreen
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("women_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
-
 @Composable
 fun ImportantDatesSection(navController: NavController) {
     val items = listOf(

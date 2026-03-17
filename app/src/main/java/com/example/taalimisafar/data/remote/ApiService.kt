@@ -16,6 +16,8 @@ import com.example.taalimisafar.data.model.Schemes
 import com.example.taalimisafar.data.model.SchemesCategory
 import com.example.taalimisafar.data.model.SkillProgram
 import com.example.taalimisafar.data.model.Stream
+import com.example.taalimisafar.data.model.WomenCategory
+import com.example.taalimisafar.data.model.WomenProgram
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -152,4 +154,19 @@ interface ApiService {
     suspend fun getIndustryProgramDetail(
         @Path("id") id: Int
     ): IndustryProgram
+
+    @GET("api/women-categories/")
+    suspend fun getWomenCategories(): List<WomenCategory>
+
+    @GET("api/women-programs")
+    suspend fun getWomenPrograms(
+        @Query("category") categoryId: Int? = null
+    ): List<WomenProgram>
+
+    @GET("api/women-programs/{id}/")
+    suspend fun getWomenProgramDetail(
+        @Path("id") id: Int
+    ): WomenProgram
+
 }
+
