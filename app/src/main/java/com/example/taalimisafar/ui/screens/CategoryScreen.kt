@@ -255,15 +255,18 @@ fun WomenEmpowermentSection(navController: NavController) {
 @Composable
 fun ImportantDatesSection(navController: NavController) {
     val items = listOf(
-        GridItem("State Govt Exam", "राज्य सरकार परीक्षा", "ریاستی حکومت کا امتحان", Icons.Default.Event, Color(0xFF673AB7)),
-        GridItem("Central Government\nExam", "केंद्र सरकार परीक्षा", "مرکزی حکومت کا امتحان", Icons.Default.AccountBalance, Color(0xFF1E88E5)),
-        GridItem("Govt. Job", "सरकारी नौकरी", "سرکاری نوکری", Icons.Default.Work, Color(0xFF43A047)),
-        GridItem("International\nAdmission", "अंतर्राष्ट्रीय प्रवेश", "بین الاقوامی داخلہ", Icons.Default.Public, Color(0xFFFF9800)),
-        GridItem("Compliances", "अनुपालन", "تعمیل", Icons.Default.Receipt, Color(0xFFE53935)),
-        GridItem("Types of Firm", "फर्म के प्रकार", "فرم کی اقسام", Icons.Default.Business, Color(0xFF009688)),
-        GridItem("Banking &\nInsurance", "बैंकिंग और बीमा", "بینکنگ اور انشورنس", Icons.Default.AccountBalance, Color(0xFF5D4037))
+        GridItem("State Govt Exam", "राज्य सरकार परीक्षा", "ریاستی حکومت کا امتحان", Icons.Default.Event, Color(0xFF673AB7), id = 1),
+        GridItem("Central Government\nExam", "केंद्र सरकार परीक्षा", "مرکزی حکومت کا امتحان", Icons.Default.AccountBalance, Color(0xFF1E88E5), id = 2),
+        GridItem("Govt. Job", "सरकारी नौकरी", "سرکاری نوکری", Icons.Default.Work, Color(0xFF43A047), id = 3),
+        GridItem("International\nAdmission", "अंतर्राष्ट्रीय प्रवेश", "بین الاقوامی داخلہ", Icons.Default.Public, Color(0xFFFF9800), id = 4),
+        GridItem("Compliances", "अनुपालन", "تعمیل", Icons.Default.Receipt, Color(0xFFE53935), id = 5),
+        GridItem("Types of Firm", "फर्म के प्रकार", "فرم کی اقسام", Icons.Default.Business, Color(0xFF009688), id = 6),
+        GridItem("Banking &\nInsurance", "बैंकिंग और बीमा", "بینکنگ اور انشورنس", Icons.Default.AccountBalance, Color(0xFF5D4037), id = 7)
     )
-    GridSection(items) { item -> navController.navigate("category_detail/${Uri.encode(item.name)}") }
+    GridSection(items) { item ->
+        val safeName = item.name.replace("\n", " ")
+        navController.navigate("important_list/${item.id}/${Uri.encode(safeName)}")
+    }
 }
 
 @Composable

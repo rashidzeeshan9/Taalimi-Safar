@@ -3,6 +3,8 @@ package com.example.taalimisafar.data.remote
 import com.example.taalimisafar.data.model.Quote
 import com.example.taalimisafar.data.model.Course
 import com.example.taalimisafar.data.model.DiplomaProgram
+import com.example.taalimisafar.data.model.ImportantDate
+import com.example.taalimisafar.data.model.ImportantProgram
 import com.example.taalimisafar.data.model.IndustryCategory
 import com.example.taalimisafar.data.model.IndustryProgram
 import com.example.taalimisafar.data.model.Internship
@@ -167,6 +169,23 @@ interface ApiService {
     suspend fun getWomenProgramDetail(
         @Path("id") id: Int
     ): WomenProgram
+
+    // Important date
+    @GET("api/important-programs/")
+
+    suspend fun getImportantPrograms(
+        @Query("category") categoryId: Int? = null
+    ): List<ImportantProgram>
+
+    @GET("api/important-programs/{id}/")
+    suspend fun getImportantProgramDetail(
+        @Path("id") id: Int
+    ): ImportantProgram
+
+    @GET("api/important-upcoming-dates/")
+    suspend fun getUpcomingDates(
+        @Query("timeframe") timeframe: String?= null
+    ): List<ImportantDate>
 
 }
 

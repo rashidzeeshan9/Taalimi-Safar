@@ -63,6 +63,9 @@ import com.example.taalimisafar.ui.CareerAndIndustry.IndustryDetailScreen
 import com.example.taalimisafar.ui.women.WomenListScreen
 import com.example.taalimisafar.ui.women.WomenDetailScreen
 
+// Important Date
+import com.example.taalimisafar.ui.important_dates.ImportantListScreen
+import com.example.taalimisafar.ui.important_dates.ImportantDetailScreen
 // --- VIEW MODELS ---
 import com.example.taalimisafar.viewmodel.InternshipViewModel
 import com.example.taalimisafar.viewmodel.JobViewModel
@@ -74,6 +77,7 @@ import com.example.taalimisafar.viewmodel.AcademicViewModel
 import com.example.taalimisafar.viewmodel.SchemeViewModel
 import com.example.taalimisafar.viewmodel.IndustryViewModel
 import com.example.taalimisafar.viewmodel.WomenViewModel
+import com.example.taalimisafar.viewmodel.ImportantDatesViewModel
 
 @Composable
 fun NavGraph(
@@ -94,6 +98,7 @@ fun NavGraph(
     val schemeViewModel: SchemeViewModel = viewModel()
     val industryViewModel: IndustryViewModel = viewModel()
     val womenViewModel: WomenViewModel = viewModel()
+    val importantViewModel: ImportantDatesViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -542,6 +547,43 @@ fun NavGraph(
             WomenDetailScreen(
                 programId = programId,
                 viewModel = womenViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        // important date
+        composable(
+            route = "important_list/{categoryId}/{categoryName}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("categoryName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
+            val categoryName = backStackEntry.arguments?.getString("categoryName") ?: ""
+
+            ImportantListScreen(
+                categoryId = categoryId,
+                categoryName = categoryName,
+                viewModel = importantViewModel,
+                onBackClick = { navController.popBackStack() },
+                onProgramClick = { programId ->
+                    navController.navigate("important_detail/$programId")
+                }
+            )
+        }
+
+        composable(
+            route = "important_detail/{programId}",
+            arguments = listOf(
+                navArgument("programId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val programId = backStackEntry.arguments?.getInt("programId") ?: 0
+
+            ImportantDetailScreen(
+                programId = programId,
+                viewModel = importantViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
