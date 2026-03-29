@@ -35,7 +35,7 @@ import com.example.taalimisafar.ui.courses.CourseListScreen
 sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
     object Home : BottomNavItem("home_tab", "Home", Icons.Default.Home)
     object Colleges : BottomNavItem("colleges_tab", "Education/School", Icons.Default.School)
-    object Exam : BottomNavItem("exam_tab", "Exam", Icons.Default.Edit)
+    object Community : BottomNavItem("community_tab", "Society", Icons.Default.People)
     object Course : BottomNavItem("course_tab", "Courses", Icons.Default.PlayArrow)
     object Profile : BottomNavItem("profile_tab", "Profile", Icons.Default.Person)
 }
@@ -53,7 +53,7 @@ fun MainScreen(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Colleges,
-        BottomNavItem.Exam,
+        BottomNavItem.Community,
         BottomNavItem.Course,
         BottomNavItem.Profile
     )
@@ -102,8 +102,11 @@ fun MainScreen(
                 EducationScreen(navController = rootNavController)
             }
 
-            composable(BottomNavItem.Exam.route) {
-                PlaceholderScreen("Upcoming Exam")
+            composable(BottomNavItem.Community.route) {
+                CommunityScreen(
+                    isDarkTheme = isDarkTheme,
+                    onThemeToggle = onThemeToggle
+                )
             }
 
             composable(BottomNavItem.Course.route) {
