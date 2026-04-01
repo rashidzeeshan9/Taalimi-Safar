@@ -6,7 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +23,11 @@ import com.example.taalimisafar.ui.screens.QuoteScreen
 import com.example.taalimisafar.ui.screens.SimpleDetailScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
 import com.example.taalimisafar.ui.screens.CategoryScreen
+
+// --- AUTH & PROFILE ---
+import com.example.taalimisafar.ui.auth.LoginScreen
+import com.example.taalimisafar.ui.auth.SignupScreen
+import com.example.taalimisafar.ui.auth.ProfileScreen
 
 // --- SCHOLARSHIPS ---
 import com.example.taalimisafar.ui.scholarships.DynamicCategoryScreen
@@ -63,9 +71,10 @@ import com.example.taalimisafar.ui.CareerAndIndustry.IndustryDetailScreen
 import com.example.taalimisafar.ui.women.WomenListScreen
 import com.example.taalimisafar.ui.women.WomenDetailScreen
 
-// Important Date
+// --- IMPORTANT DATES ---
 import com.example.taalimisafar.ui.important_dates.ImportantListScreen
 import com.example.taalimisafar.ui.important_dates.ImportantDetailScreen
+
 // --- VIEW MODELS ---
 import com.example.taalimisafar.viewmodel.InternshipViewModel
 import com.example.taalimisafar.viewmodel.JobViewModel
@@ -78,6 +87,7 @@ import com.example.taalimisafar.viewmodel.SchemeViewModel
 import com.example.taalimisafar.viewmodel.IndustryViewModel
 import com.example.taalimisafar.viewmodel.WomenViewModel
 import com.example.taalimisafar.viewmodel.ImportantDatesViewModel
+import com.example.taalimisafar.viewmodel.AuthViewModel
 
 @Composable
 fun NavGraph(
@@ -87,7 +97,7 @@ fun NavGraph(
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // ViewModels
+    // Standard ViewModels
     val scholarshipViewModel: ScholarshipViewModel = viewModel()
     val internshipViewModel: InternshipViewModel = viewModel()
     val jobViewModel: JobViewModel = viewModel()
@@ -100,6 +110,16 @@ fun NavGraph(
     val womenViewModel: WomenViewModel = viewModel()
     val importantViewModel: ImportantDatesViewModel = viewModel()
 
+    // AuthViewModel requires Context, so we use a Factory to create it properly
+    val authViewModel: AuthViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return AuthViewModel(context.applicationContext) as T
+            }
+        }
+    )
+
     NavHost(
         navController = navController,
         startDestination = "splash_screen"
@@ -111,6 +131,50 @@ fun NavGraph(
                 rootNavController = navController,
                 isDarkTheme = isDarkTheme,
                 onThemeToggle = onThemeToggle
+            )
+        }
+
+        // ==========================================
+        // AUTHENTICATION & PROFILE ROUTES
+        // ==========================================
+        composable("login") {
+            LaunchedEffect(authViewModel.isAuthenticated.value) {
+                if (authViewModel.isAuthenticated.value) {
+                    navController.navigate("profile") { popUpTo("login") { inclusive = true } }
+                }
+            }
+            LoginScreen(
+                viewModel = authViewModel,
+                onNavigateToSignup = { navController.navigate("signup") },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("signup") {
+            LaunchedEffect(authViewModel.isAuthenticated.value) {
+                if (authViewModel.isAuthenticated.value) {
+                    navController.navigate("profile") { popUpTo("signup") { inclusive = true } }
+                }
+            }
+            SignupScreen(
+                viewModel = authViewModel,
+                onNavigateToLogin = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile") {
+            LaunchedEffect(authViewModel.isAuthenticated.value) {
+                if (!authViewModel.isAuthenticated.value) {
+                    navController.navigate("login") { popUpTo("profile") { inclusive = true } }
+                }
+            }
+            ProfileScreen(
+                viewModel = authViewModel,
+                onNavigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("home_screen") { inclusive = false }
+                    }
+                }
             )
         }
 
@@ -141,8 +205,8 @@ fun NavGraph(
         ) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: 0
             val typeId = backStackEntry.arguments?.getInt("typeId") ?: 0
-            val pageTitle =
-                Uri.decode(backStackEntry.arguments?.getString("pageTitle") ?: "Scholarships")
+            val pageTitle = Uri.decode(backStackEntry.arguments?.getString("pageTitle") ?: "Scholarships")
+
             ScholarshipScreen(
                 navController = navController,
                 categoryId = categoryId,
@@ -551,7 +615,9 @@ fun NavGraph(
             )
         }
 
-        // important date
+        // ==========================================
+        // IMPORTANT DATES ROUTES
+        // ==========================================
         composable(
             route = "important_list/{categoryId}/{categoryName}",
             arguments = listOf(
@@ -572,7 +638,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = "important_detail/{programId}",
             arguments = listOf(

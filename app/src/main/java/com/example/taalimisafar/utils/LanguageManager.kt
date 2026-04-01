@@ -9,7 +9,6 @@ enum class AppLanguage(val code: String, val displayName: String) {
     URDU("ur", "English + Urdu")
 }
 
-// ✅ The Manager lives here too.
 object LanguageManager {
     var currentLanguage = mutableStateOf(AppLanguage.NONE)
 }

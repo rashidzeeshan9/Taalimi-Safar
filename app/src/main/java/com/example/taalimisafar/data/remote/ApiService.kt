@@ -1,5 +1,6 @@
 package com.example.taalimisafar.data.remote
 
+import com.example.taalimisafar.data.model.AuthResponse
 import com.example.taalimisafar.data.model.Quote
 import com.example.taalimisafar.data.model.Course
 import com.example.taalimisafar.data.model.DiplomaProgram
@@ -13,16 +14,20 @@ import com.example.taalimisafar.data.model.Scholarship
 import com.example.taalimisafar.data.model.ScholarshipCategory
 import com.example.taalimisafar.data.model.ScholarshipType
 import com.example.taalimisafar.data.model.Job
+import com.example.taalimisafar.data.model.LoginRequest
+import com.example.taalimisafar.data.model.RegisterRequest
 import com.example.taalimisafar.data.model.ReligiousProgram
 import com.example.taalimisafar.data.model.Schemes
 import com.example.taalimisafar.data.model.SchemesCategory
 import com.example.taalimisafar.data.model.SkillProgram
 import com.example.taalimisafar.data.model.Stream
+import com.example.taalimisafar.data.model.UserProfile
+import com.example.taalimisafar.data.model.VerifyOtpRequest
 import com.example.taalimisafar.data.model.WomenCategory
 import com.example.taalimisafar.data.model.WomenProgram
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.Response
+import okhttp3.ResponseBody
+import retrofit2.http.*
 
 interface ApiService {
     @GET("api/quotes/")
@@ -186,6 +191,29 @@ interface ApiService {
     suspend fun getUpcomingDates(
         @Query("timeframe") timeframe: String?= null
     ): List<ImportantDate>
+
+    // Authentication
+    @POST("api/user/signup/")
+    suspend fun registerUser(@Body request: RegisterRequest)
+
+    @POST("api/user/verify-otp/")
+    suspend fun verifyOtp(@Body request: VerifyOtpRequest): AuthResponse
+
+    @POST("api/user/login/")
+    suspend fun loginUser(@Body request: LoginRequest): AuthResponse
+
+    @POST("api/user/logout/")
+    suspend fun logoutUser(
+        @Header ("Authorization") token: String,
+        @Body body: Map<String, String>)
+
+    @GET("api/user/profile/")
+    suspend fun getMyProfile(
+        @Header("Authorization") token: String
+    ): UserProfile
+
+    @POST("api/user/resend-otp/")
+    suspend fun resendOtp(@Body request: Map<String, String>): Response<ResponseBody>
 
 }
 

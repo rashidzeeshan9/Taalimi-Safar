@@ -105,7 +105,7 @@ fun IndustryDetailScreen(program: IndustryProgram?, onBackClick: () -> Unit) {
             // --- MAIN CONTENT ---
             Column(modifier = Modifier.padding(horizontal = 16.dp).offset(y = (-30).dp)) {
 
-                // 1. OVERVIEW
+                // OVERVIEW
                 if (!program.overview.isNullOrBlank()) {
                     val overviewTitle = getInlineText("Overview", "अवलोकन", "جائزہ")
                     InteractiveExpandable(icon = Icons.Default.Info, title = overviewTitle, isInitiallyExpanded = true) {
@@ -219,7 +219,7 @@ fun DualLineText(enText: String?, transText: String?, isHeader: Boolean = false,
 
 @Composable
 fun LineByLineDualText(enText: String?, transText: String?) {
-    // Failsafe: If English is missing but translation exists, just show the translation
+
     if (enText.isNullOrBlank() || enText == "null") {
         if (!transText.isNullOrBlank() && transText != "null") {
             Text(text = transText, fontSize = 14.sp, color = IndigoPrimary, lineHeight = 22.sp)

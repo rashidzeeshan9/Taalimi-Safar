@@ -70,12 +70,17 @@ fun MainScreen(
                         label = { Text(item.label) },
                         selected = currentRoute == item.route,
                         onClick = {
-                            bottomNavController.navigate(item.route) {
-                                popUpTo(bottomNavController.graph.findStartDestination().id) {
-                                    saveState = true
+                            if (item == BottomNavItem.Profile) {
+                                // Send the user to the full-screen Profile/Login flow
+                                rootNavController.navigate("profile")
+                            } else {
+                                bottomNavController.navigate(item.route) {
+                                    popUpTo(bottomNavController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     )
@@ -111,10 +116,6 @@ fun MainScreen(
 
             composable(BottomNavItem.Course.route) {
                 CourseListScreen()
-            }
-
-            composable(BottomNavItem.Profile.route) {
-                PlaceholderScreen("User Profile")
             }
         }
     }
