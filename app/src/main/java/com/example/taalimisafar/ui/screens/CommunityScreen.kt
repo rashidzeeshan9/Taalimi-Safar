@@ -21,10 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.taalimisafar.utils.AppLanguage
-import com.example.taalimisafar.utils.LanguageManager
-
-/** English on first line; Hindi or Urdu on second line when that language is opted (like Diploma). */
+/** English first; translated based on selected language. */
 @Composable
 private fun CommunityDualLabel(
     en: String,
@@ -37,25 +34,23 @@ private fun CommunityDualLabel(
     enFontWeight: FontWeight = FontWeight.Bold,
     modifier: Modifier = Modifier
 ) {
-    val lang = LanguageManager.currentLanguage.value
-    val secondaryLine = when (lang) {
-        AppLanguage.HINDI -> hi
-        AppLanguage.URDU -> ur
-        AppLanguage.NONE -> {
-            val parts = listOfNotNull(hi.takeIf { it.isNotBlank() }, ur.takeIf { it.isNotBlank() })
-            if (parts.isEmpty()) null else parts.joinToString(" · ")
-        }
+    val selectedLanguage = com.example.taalimisafar.utils.LanguageManager.currentLanguage.value
+    val secondaryText = when (selectedLanguage) {
+        com.example.taalimisafar.utils.AppLanguage.HINDI -> hi.takeIf { it.isNotBlank() }
+        com.example.taalimisafar.utils.AppLanguage.URDU -> ur.takeIf { it.isNotBlank() }
+        else -> null
     }
-    Column(modifier = modifier) {
+
+    Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
         Text(
             text = en,
             fontSize = enFontSize,
             fontWeight = enFontWeight,
             color = enColor
         )
-        if (!secondaryLine.isNullOrBlank() && secondaryLine != en) {
+        if (!secondaryText.isNullOrBlank() && secondaryText != en) {
             Text(
-                text = secondaryLine,
+                text = secondaryText,
                 fontSize = transFontSize,
                 fontWeight = FontWeight.SemiBold,
                 color = transColor,
@@ -65,6 +60,50 @@ private fun CommunityDualLabel(
         }
     }
 }
+
+@Composable
+private fun CommunityDualSupportingText(
+    hi: String,
+    ur: String,
+    color: Color = Color(0xFF4F46E5)
+) {
+    val selectedLanguage = com.example.taalimisafar.utils.LanguageManager.currentLanguage.value
+    val t = when (selectedLanguage) {
+        com.example.taalimisafar.utils.AppLanguage.HINDI -> hi.takeIf { it.isNotBlank() }
+        com.example.taalimisafar.utils.AppLanguage.URDU -> ur.takeIf { it.isNotBlank() }
+        else -> null
+    }
+    if (t.isNullOrBlank()) return
+    Text(
+        text = t,
+        fontSize = 11.sp,
+        color = color,
+        fontWeight = FontWeight.Medium
+    )
+}
+
+private data class CommunityBilingualOption(
+    val en: String,
+    val hi: String,
+    val ur: String
+)
+
+private val communityLanguageOptions = listOf(
+    CommunityBilingualOption("English", "अंग्रेज़ी", "انگریزی"),
+    CommunityBilingualOption("Roman English", "रोमन अंग्रेज़ी", "رومن انگریزی")
+)
+
+private val communityCategoryOptions = listOf(
+    CommunityBilingualOption("Education", "शिक्षा", "تعلیم"),
+    CommunityBilingualOption("Skills", "कौशल", "مہارت"),
+    CommunityBilingualOption("Career", "करियर", "کیریئر"),
+    CommunityBilingualOption("Govt. Job", "सरकारी नौकरी", "سرکاری نوکری"),
+    CommunityBilingualOption("Exam Date", "परीक्षा तिथि", "امتحان کی تاریخ"),
+    CommunityBilingualOption("Business", "व्यवसाय", "کاروبار")
+)
+
+private fun categoryBilingualFor(en: String): CommunityBilingualOption? =
+    communityCategoryOptions.find { it.en == en }
 
 // Mock Data
 data class CommunityQuestion(
@@ -90,21 +129,15 @@ fun CommunityScreen(
     // Form States
     var expandedLanguage by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf("") }
-    val languages = listOf("English", "Roman English")
 
     var expandedCategory by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("") }
-    val categories = listOf("Education", "Skills", "Career", "Govt. Job", "Exam Date", "Business")
 
     var questionText by remember { mutableStateOf("") }
 
-    // Mock Questions State
+    // Questions State
     val questions = remember {
-        mutableStateListOf(
-            CommunityQuestion("1", "Ali Khan", "Education", "What are the best scholarships for studying abroad in 2024?", 15, 2),
-            CommunityQuestion("2", "Aisha", "Govt. Job", "Is there any upcoming vacancy for bank PO exam?", 42, 1),
-            CommunityQuestion("3", "Rahul", "Skills", "How to improve English communication skills?", 10, 0)
-        )
+        mutableStateListOf<CommunityQuestion>()
     }
 
     Scaffold(
@@ -139,10 +172,15 @@ fun CommunityScreen(
                                 enColor = Color.White,
                                 transColor = Color.White.copy(alpha = 0.88f)
                             )
-                            Text(
-                                text = "Ask, Answer, and Connect",
-                                fontSize = 14.sp,
-                                color = Color.White.copy(alpha = 0.8f),
+                            CommunityDualLabel(
+                                en = "Ask, Answer, and Connect",
+                                hi = "पूछें, उत्तर दें और जुड़ें",
+                                ur = "پوچھیں، جواب دیں اور جڑیں",
+                                enFontSize = 14.sp,
+                                transFontSize = 12.sp,
+                                enColor = Color.White.copy(alpha = 0.92f),
+                                transColor = Color.White.copy(alpha = 0.78f),
+                                enFontWeight = FontWeight.Medium,
                                 modifier = Modifier.padding(top = 4.dp)
                             )
                         }
@@ -160,7 +198,16 @@ fun CommunityScreen(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
                         placeholder = {
-                            Text("Search community...", color = Color.Gray)
+                            CommunityDualLabel(
+                                en = "Search society...",
+                                hi = "समाज में खोजें...",
+                                ur = "سوسائٹی میں تلاش کریں...",
+                                enFontSize = 16.sp,
+                                transFontSize = 12.sp,
+                                enColor = Color.Gray,
+                                transColor = Color.Gray.copy(alpha = 0.85f),
+                                enFontWeight = FontWeight.Normal
+                            )
                         },
                         leadingIcon = {
                             Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFF1A237E))
@@ -231,7 +278,23 @@ fun CommunityScreen(
                                     value = selectedLanguage,
                                     onValueChange = {},
                                     readOnly = true,
-                                    label = { Text("Language") },
+                                    label = {
+                                        CommunityDualLabel(
+                                            en = "Language",
+                                            hi = "भाषा",
+                                            ur = "زبان",
+                                            enFontSize = 14.sp,
+                                            transFontSize = 11.sp,
+                                            enColor = Color(0xFF1A237E),
+                                            transColor = Color(0xFF4F46E5),
+                                            enFontWeight = FontWeight.Medium
+                                        )
+                                    },
+                                    supportingText = {
+                                        communityLanguageOptions.find { it.en == selectedLanguage }?.let { opt ->
+                                            CommunityDualSupportingText(opt.hi, opt.ur)
+                                        }
+                                    },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage) },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -241,11 +304,22 @@ fun CommunityScreen(
                                     expanded = expandedLanguage,
                                     onDismissRequest = { expandedLanguage = false }
                                 ) {
-                                    languages.forEach { language ->
+                                    communityLanguageOptions.forEach { opt ->
                                         DropdownMenuItem(
-                                            text = { Text(language) },
+                                            text = {
+                                                CommunityDualLabel(
+                                                    en = opt.en,
+                                                    hi = opt.hi,
+                                                    ur = opt.ur,
+                                                    enFontSize = 15.sp,
+                                                    transFontSize = 12.sp,
+                                                    enColor = Color.Black,
+                                                    transColor = Color(0xFF4F46E5),
+                                                    enFontWeight = FontWeight.Medium
+                                                )
+                                            },
                                             onClick = {
-                                                selectedLanguage = language
+                                                selectedLanguage = opt.en
                                                 expandedLanguage = false
                                             }
                                         )
@@ -263,7 +337,23 @@ fun CommunityScreen(
                                     value = selectedCategory,
                                     onValueChange = {},
                                     readOnly = true,
-                                    label = { Text("Category") },
+                                    label = {
+                                        CommunityDualLabel(
+                                            en = "Category",
+                                            hi = "श्रेणी",
+                                            ur = "زمرہ",
+                                            enFontSize = 14.sp,
+                                            transFontSize = 11.sp,
+                                            enColor = Color(0xFF1A237E),
+                                            transColor = Color(0xFF4F46E5),
+                                            enFontWeight = FontWeight.Medium
+                                        )
+                                    },
+                                    supportingText = {
+                                        communityCategoryOptions.find { it.en == selectedCategory }?.let { opt ->
+                                            CommunityDualSupportingText(opt.hi, opt.ur)
+                                        }
+                                    },
                                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory) },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -273,11 +363,22 @@ fun CommunityScreen(
                                     expanded = expandedCategory,
                                     onDismissRequest = { expandedCategory = false }
                                 ) {
-                                    categories.forEach { category ->
+                                    communityCategoryOptions.forEach { opt ->
                                         DropdownMenuItem(
-                                            text = { Text(category) },
+                                            text = {
+                                                CommunityDualLabel(
+                                                    en = opt.en,
+                                                    hi = opt.hi,
+                                                    ur = opt.ur,
+                                                    enFontSize = 15.sp,
+                                                    transFontSize = 12.sp,
+                                                    enColor = Color.Black,
+                                                    transColor = Color(0xFF4F46E5),
+                                                    enFontWeight = FontWeight.Medium
+                                                )
+                                            },
                                             onClick = {
-                                                selectedCategory = category
+                                                selectedCategory = opt.en
                                                 expandedCategory = false
                                             }
                                         )
@@ -307,7 +408,18 @@ fun CommunityScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(120.dp),
-                            placeholder = { Text("Write your question here...") },
+                            placeholder = {
+                                CommunityDualLabel(
+                                    en = "Write your question here...",
+                                    hi = "अपना प्रश्न यहाँ लिखें...",
+                                    ur = "اپنا سوال یہاں لکھیں...",
+                                    enFontSize = 15.sp,
+                                    transFontSize = 12.sp,
+                                    enColor = Color.Gray,
+                                    transColor = Color.Gray.copy(alpha = 0.85f),
+                                    enFontWeight = FontWeight.Normal
+                                )
+                            },
                             singleLine = false,
                             maxLines = 5,
                             colors = OutlinedTextFieldDefaults.colors(
@@ -427,7 +539,17 @@ fun QuestionCard(question: CommunityQuestion) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
                         Text(text = question.author, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(text = "Category: ${question.category}", fontSize = 12.sp, color = Color.Gray)
+                        val cat = categoryBilingualFor(question.category)
+                        CommunityDualLabel(
+                            en = "Category: ${question.category}",
+                            hi = "श्रेणी: ${cat?.hi ?: question.category}",
+                            ur = "زمرہ: ${cat?.ur ?: question.category}",
+                            enFontSize = 12.sp,
+                            transFontSize = 10.sp,
+                            enColor = Color.Gray,
+                            transColor = Color(0xFF5C6BC0),
+                            enFontWeight = FontWeight.Normal
+                        )
                     }
                 }
             }
@@ -502,7 +624,16 @@ fun QuestionCard(question: CommunityQuestion) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.ChatBubbleOutline, contentDescription = "Answers", tint = Color.Gray, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Answers", fontSize = 14.sp, color = Color.Gray)
+                    CommunityDualLabel(
+                        en = "Answers",
+                        hi = "उत्तर",
+                        ur = "جوابات",
+                        enFontSize = 14.sp,
+                        transFontSize = 11.sp,
+                        enColor = Color.Gray,
+                        transColor = Color.Gray.copy(alpha = 0.88f),
+                        enFontWeight = FontWeight.Normal
+                    )
                 }
             }
         }
