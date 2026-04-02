@@ -110,7 +110,8 @@ fun MainScreen(
             composable(BottomNavItem.Community.route) {
                 CommunityScreen(
                     isDarkTheme = isDarkTheme,
-                    onThemeToggle = onThemeToggle
+                    onThemeToggle = onThemeToggle,
+                    navController = rootNavController
                 )
             }
 

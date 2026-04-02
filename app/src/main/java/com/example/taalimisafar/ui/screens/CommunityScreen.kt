@@ -21,7 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-/** English first; translated based on selected language. */
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.taalimisafar.data.model.CommunityQuestion
+import com.example.taalimisafar.viewmodel.CommunityViewModel
 @Composable
 private fun CommunityDualLabel(
     en: String,
@@ -105,23 +108,15 @@ private val communityCategoryOptions = listOf(
 private fun categoryBilingualFor(en: String): CommunityBilingualOption? =
     communityCategoryOptions.find { it.en == en }
 
-// Mock Data
-data class CommunityQuestion(
-    val id: String,
-    val author: String,
-    val category: String,
-    val text: String,
-    var upvotes: Int,
-    var downvotes: Int,
-    var isFollowing: Boolean = false,
-    var userVote: Int = 0 // 1 for up, -1 for down, 0 for none
-)
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityScreen(
     isDarkTheme: Boolean = false,
-    onThemeToggle: () -> Unit = {}
+    onThemeToggle: () -> Unit = {},
+    navController: NavController,
+    viewModel: CommunityViewModel = viewModel()
 ) {
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
@@ -136,9 +131,7 @@ fun CommunityScreen(
     var questionText by remember { mutableStateOf("") }
 
     // Questions State
-    val questions = remember {
-        mutableStateListOf<CommunityQuestion>()
-    }
+    val questions by viewModel.questions.collectAsState()
 
     Scaffold(
         containerColor = Color(0xFFF5F5F5),
@@ -463,7 +456,8 @@ fun CommunityScreen(
                                         Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                                         return@Button
                                     }
-                                    Toast.makeText(context, "Submitted to Everyone (Pending)", Toast.LENGTH_LONG).show()
+                                    viewModel.addQuestion("You", selectedCategory, questionText)
+                                    Toast.makeText(context, "Submitted to Everyone", Toast.LENGTH_LONG).show()
                                     questionText = ""
                                 },
                                 modifier = Modifier.weight(1f),
@@ -501,23 +495,31 @@ fun CommunityScreen(
 
             // 3. List of Questions
             items(questions) { q ->
-                QuestionCard(question = q)
+                QuestionCard(
+                    question = q,
+                    onQuestionClick = { navController.navigate("communityDetail/${q.id}") },
+                    onUpvote = { viewModel.toggleUpvote(q.id) },
+                    onDownvote = { viewModel.toggleDownvote(q.id) }
+                )
             }
         }
     }
 }
 
 @Composable
-fun QuestionCard(question: CommunityQuestion) {
-    var upvotes by remember { mutableIntStateOf(question.upvotes) }
-    var downvotes by remember { mutableIntStateOf(question.downvotes) }
-    var userVote by remember { mutableIntStateOf(question.userVote) }
-
+fun QuestionCard(
+    question: CommunityQuestion,
+    onQuestionClick: () -> Unit,
+    onUpvote: () -> Unit,
+    onDownvote: () -> Unit
+) {
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onQuestionClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Header: Author & Follow button
@@ -575,50 +577,32 @@ fun QuestionCard(question: CommunityQuestion) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
-                        onClick = {
-                            if (userVote == 1) {
-                                userVote = 0
-                                upvotes--
-                            } else {
-                                if (userVote == -1) downvotes--
-                                userVote = 1
-                                upvotes++
-                            }
-                        },
+                        onClick = onUpvote,
                         modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ThumbUp,
                             contentDescription = "Upvote",
-                            tint = if (userVote == 1) Color(0xFF1A237E) else Color.Gray,
+                            tint = if (question.userVote == 1) Color(0xFF1A237E) else Color.Gray,
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    Text(text = "$upvotes", fontSize = 14.sp, color = Color.Gray)
+                    Text(text = "${question.upvotes}", fontSize = 14.sp, color = Color.Gray)
                     
                     Spacer(modifier = Modifier.width(16.dp))
 
                     IconButton(
-                        onClick = {
-                            if (userVote == -1) {
-                                userVote = 0
-                                downvotes--
-                            } else {
-                                if (userVote == 1) upvotes--
-                                userVote = -1
-                                downvotes++
-                            }
-                        },
+                        onClick = onDownvote,
                         modifier = Modifier.size(32.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ThumbDown,
                             contentDescription = "Downvote",
-                            tint = if (userVote == -1) Color(0xFFF44336) else Color.Gray,
+                            tint = if (question.userVote == -1) Color(0xFFF44336) else Color.Gray,
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                    Text(text = "$downvotes", fontSize = 14.sp, color = Color.Gray)
+                    Text(text = "${question.downvotes}", fontSize = 14.sp, color = Color.Gray)
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {

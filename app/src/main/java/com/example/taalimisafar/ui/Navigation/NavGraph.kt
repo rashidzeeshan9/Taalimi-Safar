@@ -23,6 +23,7 @@ import com.example.taalimisafar.ui.screens.QuoteScreen
 import com.example.taalimisafar.ui.screens.SimpleDetailScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
 import com.example.taalimisafar.ui.screens.CategoryScreen
+import com.example.taalimisafar.ui.screens.CommunityDetailScreen
 
 // --- AUTH & PROFILE ---
 import com.example.taalimisafar.ui.auth.LoginScreen
@@ -88,6 +89,7 @@ import com.example.taalimisafar.viewmodel.IndustryViewModel
 import com.example.taalimisafar.viewmodel.WomenViewModel
 import com.example.taalimisafar.viewmodel.ImportantDatesViewModel
 import com.example.taalimisafar.viewmodel.AuthViewModel
+import com.example.taalimisafar.viewmodel.CommunityViewModel
 
 @Composable
 fun NavGraph(
@@ -109,6 +111,7 @@ fun NavGraph(
     val industryViewModel: IndustryViewModel = viewModel()
     val womenViewModel: WomenViewModel = viewModel()
     val importantViewModel: ImportantDatesViewModel = viewModel()
+    val communityViewModel: CommunityViewModel = viewModel()
 
     // AuthViewModel requires Context, so we use a Factory to create it properly
     val authViewModel: AuthViewModel = viewModel(
@@ -238,6 +241,21 @@ fun NavGraph(
 
         // --- WOMEN EMPOWERMENT NATIVE GRID ROUTE ---
         composable("women") { CategoryScreen(navController, "Women Empowerment", "women") }
+
+        // ==========================================
+        // COMMUNITY ROUTES
+        // ==========================================
+        composable(
+            route = "communityDetail/{questionId}",
+            arguments = listOf(navArgument("questionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val questionId = backStackEntry.arguments?.getString("questionId") ?: ""
+            CommunityDetailScreen(
+                questionId = questionId,
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = communityViewModel
+            )
+        }
 
         // ==========================================
         // SIMPLE DETAIL FALLBACK ROUTES
