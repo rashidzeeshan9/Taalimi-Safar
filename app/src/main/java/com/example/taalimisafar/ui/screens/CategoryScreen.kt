@@ -27,13 +27,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.taalimisafar.utils.AppLanguage
 import com.example.taalimisafar.utils.LanguageManager
+import com.example.taalimisafar.viewmodel.AuthViewModel
+import com.example.taalimisafar.viewmodel.CommunityViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     navController: NavController,
     categoryTitle: String,
-    categoryId: String
+    categoryId: String // 🔥 Fixed! Removed the ViewModels from here.
 ) {
     Scaffold(
         containerColor = Color(0xFFF5F5F5),
@@ -72,7 +74,6 @@ fun CategoryScreen(
         }
     }
 }
-
 data class GridItem(
     val name: String,
     val nameHi: String? = null,

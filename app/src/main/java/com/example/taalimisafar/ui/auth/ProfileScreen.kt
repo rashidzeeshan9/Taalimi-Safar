@@ -1,134 +1,94 @@
 package com.example.taalimisafar.ui.auth
 
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-// 🔥 THIS IS THE FIX FOR THE COLOR ERRORS 🔥
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.taalimisafar.viewmodel.AuthViewModel
 
 @Composable
 fun ProfileScreen(
     viewModel: AuthViewModel,
-    onNavigateToLogin: () -> Unit // Passed from your navigation graph to handle the logout click
+    navController: NavController,
+    onNavigateToLogin: () -> Unit
 ) {
-    // Fetch profile data when the screen opens
-    LaunchedEffect(Unit) { viewModel.fetchProfile() }
-    val profile = viewModel.userProfile.value
+    val context = LocalContext.current
+    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+    val imagePickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        profileImageUri = uri
+        if (uri != null) Toast.makeText(context, "Image selected!", Toast.LENGTH_SHORT).show()
+    }
 
-    if (profile == null) {
-        // --- LOADING STATE ---
+    Scaffold(
+        containerColor = Color(0xFFF9FAFB)
+        // 🔥 REMOVED THE BOTTOM BAR HERE! MainScreen handles it natively now.
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator()
-            Spacer(Modifier.height(16.dp))
-            Text("Loading secure profile data...")
-        }
-    } else {
-        // --- ACTUAL PROFILE UI ---
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // --- HEADER SECTION ---
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    modifier = Modifier.size(80.dp),
-                    shape = CircleShape,
-                    color = Color(0xFFD1E8E2)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text("Profile\npic", textAlign = TextAlign.Center, fontSize = 12.sp)
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.size(80.dp).clip(CircleShape).background(Color(0xFFE0F2F1)).clickable { imagePickerLauncher.launch("image/*") }, contentAlignment = Alignment.Center) {
+                    if (profileImageUri != null) AsyncImage(model = profileImageUri, contentDescription = "Profile Picture", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                    else Text("Profile\npic", fontSize = 12.sp, color = Color(0xFF00695C))
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = "@zaqwsg", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Card(colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(defaultElevation = 2.dp), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    ProfileMenuItem(title = "Points", trailingText = "0") { }
+                    HorizontalDivider(color = Color(0xFFF0F0F0))
+                    ProfileMenuItem(title = "Progress tracker") { }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(defaultElevation = 2.dp), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Column {
+                    ProfileMenuItem(title = "Edit Profile") { navController.navigate("edit_profile") }
+                    HorizontalDivider(color = Color(0xFFF0F0F0))
+                    ProfileMenuItem(title = "Setting") { }
+                    HorizontalDivider(color = Color(0xFFF0F0F0))
+                    ProfileMenuItem(title = "About Us") { }
+                    HorizontalDivider(color = Color(0xFFF0F0F0))
+                    ProfileMenuItem(title = "Feedback") { }
+                    HorizontalDivider(color = Color(0xFFF0F0F0))
+                    ProfileMenuItem(title = "Logout", textColor = Color.Red) {
+                        viewModel.logout()
+                        onNavigateToLogin()
                     }
                 }
-                Spacer(Modifier.width(16.dp))
-                Text(
-                    text = "@${profile.custom_username}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            // --- STATS GROUP ---
-            ProfileCard {
-                ProfileMenuItem("Points", trailingText = "${profile.total_points}")
-                Divider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
-                ProfileMenuItem("Progress tracker")
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            // --- OPTIONS GROUP ---
-            ProfileCard {
-                ProfileMenuItem("Edit Profile")
-                Divider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
-                ProfileMenuItem("Setting")
-                Divider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
-                ProfileMenuItem("About Us")
-                Divider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
-                ProfileMenuItem("Feedback")
-                Divider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
-
-                // Logout Button
-                ProfileMenuItem("Logout", textColor = Color.Red, onClick = {
-                    viewModel.logout()
-                    onNavigateToLogin()
-                })
             }
         }
     }
 }
 
-// --- HELPER COMPOSABLES ---
-
 @Composable
-fun ProfileCard(content: @Composable ColumnScope.() -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(2.dp),
-        content = content
-    )
-}
-
-@Composable
-fun ProfileMenuItem(
-    title: String,
-    trailingText: String? = null,
-    textColor: Color = Color.Black,
-    onClick: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(title, color = textColor, fontSize = 16.sp)
-        if (trailingText != null) {
-            Text(trailingText, fontWeight = FontWeight.Bold, color = Color.Gray)
-        }
+fun ProfileMenuItem(title: String, trailingText: String? = null, textColor: Color = Color.Black, onClick: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+        Text(text = title, fontSize = 16.sp, color = textColor)
+        if (trailingText != null) Text(text = trailingText, fontSize = 16.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
     }
 }

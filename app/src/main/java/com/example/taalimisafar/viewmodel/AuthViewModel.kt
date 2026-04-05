@@ -44,7 +44,7 @@ class AuthViewModel(context: Context) : ViewModel() {
                 tokenManager.saveTokens(response.access, response.refresh)
 
                 Log.e("AUTH_DEBUG", "3. Attempting to fetch profile with new token...")
-                val profile = apiService.getMyProfile("Bearer ${response.access}")
+                val profile = apiService.getMyProfile()
 
                 Log.e("AUTH_DEBUG", "4. Profile fetched successfully!")
                 userProfile.value = profile
@@ -134,7 +134,7 @@ class AuthViewModel(context: Context) : ViewModel() {
                 val token = tokenManager.getAccessToken()
 
                 if (token != null) {
-                    val profile = apiService.getMyProfile("Bearer $token")
+                    val profile = apiService.getMyProfile()
                     userProfile.value = profile
                 } else {
                     isAuthenticated.value = false
@@ -159,8 +159,8 @@ class AuthViewModel(context: Context) : ViewModel() {
                 val refreshToken = tokenManager.getRefreshToken()
 
                 // You need to pass BOTH the Authorization header and the refresh token body
-                if (accessToken != null && refreshToken != null) {
-                    apiService.logoutUser("Bearer $accessToken", mapOf("refresh" to refreshToken))
+                if (refreshToken != null) {
+                    apiService.logoutUser(mapOf("refresh" to refreshToken))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -172,5 +172,8 @@ class AuthViewModel(context: Context) : ViewModel() {
                 userProfile.value = null
             }
         }
+    }
+    fun getAccessToken(): String? {
+        return tokenManager.getAccessToken()
     }
 }

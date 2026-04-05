@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +16,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
+// --- REMOTE CLIENT IMPORT ---
+import com.example.taalimisafar.data.remote.RetrofitClient
+import com.example.taalimisafar.data.remote.ApiService
+
 // --- CORE SCREENS ---
 import com.example.taalimisafar.ui.screens.MainScreen
 import com.example.taalimisafar.ui.screens.QuoteScreen
@@ -24,11 +27,13 @@ import com.example.taalimisafar.ui.screens.SimpleDetailScreen
 import com.example.taalimisafar.ui.screens.SplashScreen
 import com.example.taalimisafar.ui.screens.CategoryScreen
 import com.example.taalimisafar.ui.screens.CommunityDetailScreen
+import com.example.taalimisafar.ui.screens.CommunityScreen
 
 // --- AUTH & PROFILE ---
 import com.example.taalimisafar.ui.auth.LoginScreen
 import com.example.taalimisafar.ui.auth.SignupScreen
 import com.example.taalimisafar.ui.auth.ProfileScreen
+import com.example.taalimisafar.ui.auth.EditProfileScreen
 
 // --- SCHOLARSHIPS ---
 import com.example.taalimisafar.ui.scholarships.DynamicCategoryScreen
@@ -90,6 +95,7 @@ import com.example.taalimisafar.viewmodel.WomenViewModel
 import com.example.taalimisafar.viewmodel.ImportantDatesViewModel
 import com.example.taalimisafar.viewmodel.AuthViewModel
 import com.example.taalimisafar.viewmodel.CommunityViewModel
+import com.example.taalimisafar.viewmodel.EducationViewModel
 
 @Composable
 fun NavGraph(
@@ -99,30 +105,40 @@ fun NavGraph(
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // Standard ViewModels
-    val scholarshipViewModel: ScholarshipViewModel = viewModel()
-    val internshipViewModel: InternshipViewModel = viewModel()
-    val jobViewModel: JobViewModel = viewModel()
-    val skillViewModel: SkillViewModel = viewModel()
-    val religiousViewModel: ReligiousViewModel = viewModel()
-    val diplomaViewModel: DiplomaViewModel = viewModel()
-    val academicViewModel: AcademicViewModel = viewModel()
-    val schemeViewModel: SchemeViewModel = viewModel()
-    val industryViewModel: IndustryViewModel = viewModel()
-    val womenViewModel: WomenViewModel = viewModel()
-    val importantViewModel: ImportantDatesViewModel = viewModel()
-    val communityViewModel: CommunityViewModel = viewModel()
+    // 1. Get the secure API Service
+    val apiService = RetrofitClient.getClient(context.applicationContext)
 
-    // AuthViewModel requires Context, so we use a Factory to create it properly
-    val authViewModel: AuthViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AuthViewModel(context.applicationContext) as T
-            }
+    // 2. 🔥 THE MAGIC FACTORY 🔥
+    val sharedFactory = object : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return try {
+                modelClass.getConstructor(ApiService::class.java).newInstance(apiService)
+            } catch (e: NoSuchMethodException) {
+                try {
+                    modelClass.getConstructor(android.content.Context::class.java).newInstance(context.applicationContext)
+                } catch (e2: NoSuchMethodException) {
+                    modelClass.getConstructor().newInstance()
+                }
+            } as T
         }
-    )
+    }
 
+    // 3. APPLY THE FACTORY TO ALL VIEWMODELS
+    val scholarshipViewModel: ScholarshipViewModel = viewModel(factory = sharedFactory)
+    val internshipViewModel: InternshipViewModel = viewModel(factory = sharedFactory)
+    val jobViewModel: JobViewModel = viewModel(factory = sharedFactory)
+    val skillViewModel: SkillViewModel = viewModel(factory = sharedFactory)
+    val religiousViewModel: ReligiousViewModel = viewModel(factory = sharedFactory)
+    val diplomaViewModel: DiplomaViewModel = viewModel(factory = sharedFactory)
+    val academicViewModel: AcademicViewModel = viewModel(factory = sharedFactory)
+    val schemeViewModel: SchemeViewModel = viewModel(factory = sharedFactory)
+    val industryViewModel: IndustryViewModel = viewModel(factory = sharedFactory)
+    val womenViewModel: WomenViewModel = viewModel(factory = sharedFactory)
+    val importantViewModel: ImportantDatesViewModel = viewModel(factory = sharedFactory)
+    val authViewModel: AuthViewModel = viewModel(factory = sharedFactory)
+    val communityViewModel: CommunityViewModel = viewModel(factory = sharedFactory)
+    val educationViewModel: EducationViewModel = viewModel(factory = sharedFactory)
     NavHost(
         navController = navController,
         startDestination = "splash_screen"
@@ -133,7 +149,10 @@ fun NavGraph(
             MainScreen(
                 rootNavController = navController,
                 isDarkTheme = isDarkTheme,
-                onThemeToggle = onThemeToggle
+                onThemeToggle = onThemeToggle,
+                authViewModel = authViewModel,
+                communityViewModel = communityViewModel,
+                educationViewModel = educationViewModel
             )
         }
 
@@ -148,6 +167,7 @@ fun NavGraph(
             }
             LoginScreen(
                 viewModel = authViewModel,
+                navController = navController, // 🔥 ADDED: Powers the Bottom Navigation in Login
                 onNavigateToSignup = { navController.navigate("signup") },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -173,11 +193,46 @@ fun NavGraph(
             }
             ProfileScreen(
                 viewModel = authViewModel,
+                navController = navController, // 🔥 ADDED: Powers the Bottom Navigation & Edit Button
                 onNavigateToLogin = {
                     navController.navigate("login") {
                         popUpTo("home_screen") { inclusive = false }
                     }
                 }
+            )
+        }
+
+        // 🔥 NEW ROUTE: Edit Profile Form
+        composable("edit_profile") {
+            EditProfileScreen(
+                navController = navController,
+                viewModel = authViewModel
+            )
+        }
+
+        // ==========================================
+        // COMMUNITY / SOCIETY ROUTES
+        // ==========================================
+
+        composable("community") {
+            CommunityScreen(
+                navController = navController,
+                viewModel = communityViewModel,
+                authViewModel = authViewModel
+            )
+        }
+
+        composable(
+            route = "communityDetail/{questionId}",
+            arguments = listOf(navArgument("questionId") { type = NavType.IntType }) // 🔥 FIXED: Uses IntType
+        ) { backStackEntry ->
+            val questionId = backStackEntry.arguments?.getInt("questionId") ?: 0
+            CommunityDetailScreen(
+                questionId = questionId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLogin = { navController.navigate("login") },
+                viewModel = communityViewModel,
+                authViewModel = authViewModel
             )
         }
 
@@ -238,24 +293,7 @@ fun NavGraph(
         composable("sports") { CategoryScreen(navController, "Career Industry", "sports") }
         composable("hobbies") { CategoryScreen(navController, "Religious Studies", "hobbies") }
         composable("govt_schemes") { CategoryScreen(navController, "Govt Schemes", "govt_schemes") }
-
-        // --- WOMEN EMPOWERMENT NATIVE GRID ROUTE ---
         composable("women") { CategoryScreen(navController, "Women Empowerment", "women") }
-
-        // ==========================================
-        // COMMUNITY ROUTES
-        // ==========================================
-        composable(
-            route = "communityDetail/{questionId}",
-            arguments = listOf(navArgument("questionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val questionId = backStackEntry.arguments?.getString("questionId") ?: ""
-            CommunityDetailScreen(
-                questionId = questionId,
-                onNavigateBack = { navController.popBackStack() },
-                viewModel = communityViewModel
-            )
-        }
 
         // ==========================================
         // SIMPLE DETAIL FALLBACK ROUTES

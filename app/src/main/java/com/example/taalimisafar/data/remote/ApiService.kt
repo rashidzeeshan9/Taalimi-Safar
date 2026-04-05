@@ -25,6 +25,12 @@ import com.example.taalimisafar.data.model.UserProfile
 import com.example.taalimisafar.data.model.VerifyOtpRequest
 import com.example.taalimisafar.data.model.WomenCategory
 import com.example.taalimisafar.data.model.WomenProgram
+import com.example.taalimisafar.data.model.CommunityQuestion
+import com.example.taalimisafar.data.model.EducationBoard
+import com.example.taalimisafar.data.model.SubmitQuestionRequest
+import com.example.taalimisafar.data.model.VoteRequest
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.Retrofit
 import retrofit2.Response
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -204,16 +210,44 @@ interface ApiService {
 
     @POST("api/user/logout/")
     suspend fun logoutUser(
-        @Header ("Authorization") token: String,
-        @Body body: Map<String, String>)
-
+        @Body body: Map<String, String>
+    )
     @GET("api/user/profile/")
-    suspend fun getMyProfile(
-        @Header("Authorization") token: String
-    ): UserProfile
-
+    suspend fun getMyProfile(): UserProfile
     @POST("api/user/resend-otp/")
     suspend fun resendOtp(@Body request: Map<String, String>): Response<ResponseBody>
+
+    // community part
+    @GET("api/community/feed/")
+    suspend fun getCommunityFeed(): List<CommunityQuestion>
+
+    @GET("api/community/my-questions/")
+    suspend fun getMyQuestions(): List<CommunityQuestion>
+
+    @POST("api/community/submit/")
+    suspend fun submitQuestion(
+        @Body request: SubmitQuestionRequest
+    ): CommunityQuestion
+
+    @POST("api/community/{id}/vote/")
+    suspend fun toggleVote(
+        @Path("id") questionId: String,
+        @Body request: VoteRequest
+    ): retrofit2.Response<okhttp3.ResponseBody>
+
+    @POST("api/community/{id}/answer/")
+    suspend fun addAnswer(
+        @Path("id") questionId: String,
+        @Body body: Map<String, String>
+    )
+
+    // Education and School
+
+    @GET("api/education/boards/") // Adjust to your actual Django URL
+    suspend fun getEducationBoards(): Response<List<EducationBoard>>
+
+    @GET("api/education/boards/{id}/")
+    suspend fun getBoardDetail(@Path("id") boardId: Int): Response<EducationBoard>
 
 }
 
