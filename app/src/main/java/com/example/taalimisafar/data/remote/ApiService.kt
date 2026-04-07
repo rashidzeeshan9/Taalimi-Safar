@@ -214,6 +214,12 @@ interface ApiService {
     )
     @GET("api/user/profile/")
     suspend fun getMyProfile(): UserProfile
+
+    @PATCH("api/user/profile/")
+    suspend fun updateProfile(
+        @Body updates: Map<String, String>
+    ): UserProfile
+
     @POST("api/user/resend-otp/")
     suspend fun resendOtp(@Body request: Map<String, String>): Response<ResponseBody>
 
@@ -250,4 +256,3 @@ interface ApiService {
     suspend fun getBoardDetail(@Path("id") boardId: Int): Response<EducationBoard>
 
 }
-

@@ -192,6 +192,17 @@ fun ProfilePicture(url: String?, modifier: Modifier = Modifier.size(36.dp)) {
 
 @Composable
 fun QuestionDetailsCard(question: CommunityQuestion) {
+    // 🔥 THE FIX: Safely convert category numbers to names for the details screen
+    val resolvedCategory = when (question.category) {
+        "1" -> "Education"
+        "2" -> "Skills"
+        "3" -> "Career"
+        "4" -> "Govt. Job"
+        "5" -> "Exam Date"
+        "6" -> "Business"
+        else -> question.category ?: "General"
+    }
+
     Card(
         elevation = CardDefaults.cardElevation(2.dp),
         shape = RoundedCornerShape(12.dp),
@@ -205,7 +216,8 @@ fun QuestionDetailsCard(question: CommunityQuestion) {
                 Column {
                     Text(text = question.author ?: "Anonymous", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     Row {
-                        Text(text = "${question.category ?: "General"} • ", fontSize = 12.sp, color = Color.Gray)
+                        // 🔥 Ensure resolvedCategory is displayed here
+                        Text(text = "$resolvedCategory • ", fontSize = 12.sp, color = Color.Gray)
                         Text(
                             text = "To: ${question.target ?: "Everyone"}",
                             fontSize = 12.sp,

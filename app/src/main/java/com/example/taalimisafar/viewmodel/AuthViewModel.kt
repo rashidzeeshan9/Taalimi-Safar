@@ -1,6 +1,7 @@
 package com.example.taalimisafar.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,8 +9,8 @@ import com.example.taalimisafar.data.model.*
 import com.example.taalimisafar.data.remote.RetrofitClient
 import com.example.taalimisafar.utils.TokenManager
 import kotlinx.coroutines.launch
-import android.util.Log
 import retrofit2.HttpException
+
 class AuthViewModel(context: Context) : ViewModel() {
     private val apiService = RetrofitClient.getClient(context)
 
@@ -23,6 +24,12 @@ class AuthViewModel(context: Context) : ViewModel() {
     var isAuthenticated = mutableStateOf(tokenManager.getAccessToken() != null)
     var userProfile = mutableStateOf<UserProfile?>(null)
 
+    // When the app starts, if they are logged in, automatically fetch their data!
+    init {
+        if (isAuthenticated.value) {
+            fetchProfile()
+        }
+    }
     fun login(email: String, password: String) {
         viewModelScope.launch {
             isLoading.value = true
@@ -152,13 +159,36 @@ class AuthViewModel(context: Context) : ViewModel() {
         }
     }
 
+    // ==========================================
+    // 🔥 NEW: SAVE PROFILE EDITS TO BACKEND
+    // ==========================================
+    fun updateProfileData(updates: Map<String, String>) {
+        viewModelScope.launch {
+            try {
+                // 1. Send the changes to the Django backend using PATCH
+                val updatedProfile = apiService.updateProfile(updates)
+
+                // 2. Update the local Compose state instantly
+                userProfile.value = updatedProfile
+
+                Log.d("AUTH_DEBUG", "Profile updated successfully: $updates")
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("AUTH_DEBUG", "Failed to update profile HTTP ${e.code()}: $errorBody")
+                errorMessage.value = "Failed to update profile."
+            } catch (e: Exception) {
+                Log.e("AUTH_DEBUG", "Error updating profile", e)
+                errorMessage.value = "Network error while saving."
+            }
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             try {
-                val accessToken = tokenManager.getAccessToken()
                 val refreshToken = tokenManager.getRefreshToken()
 
-                // You need to pass BOTH the Authorization header and the refresh token body
+                // Pass the refresh token body
                 if (refreshToken != null) {
                     apiService.logoutUser(mapOf("refresh" to refreshToken))
                 }
@@ -170,6 +200,36 @@ class AuthViewModel(context: Context) : ViewModel() {
                 tokenManager.clearTokens()
                 isAuthenticated.value = false
                 userProfile.value = null
+            }
+        }
+    }
+
+    // 🔥 Request an OTP to be sent to the NEW email address
+    fun requestEmailChangeOtp(newEmail: String) {
+        viewModelScope.launch {
+            try {
+                // TODO: Create this endpoint in Django and ApiService
+                // apiService.requestEmailUpdateOtp(mapOf("new_email" to newEmail))
+                Log.d("AUTH_DEBUG", "Requested OTP for new email: $newEmail")
+            } catch (e: Exception) {
+                Log.e("AUTH_DEBUG", "Failed to request email OTP", e)
+            }
+        }
+    }
+
+    // 🔥 Verify the OTP. If true, the UI will update the email instantly.
+    fun verifyEmailChangeOtp(newEmail: String, otp: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                // TODO: Create this endpoint in Django and ApiService
+                // val response = apiService.verifyEmailUpdateOtp(mapOf("new_email" to newEmail, "otp" to otp))
+
+                // If successful, we update the profile data to reflect the new email
+                updateProfileData(mapOf("email" to newEmail))
+                onResult(true)
+            } catch (e: Exception) {
+                Log.e("AUTH_DEBUG", "Failed to verify email OTP", e)
+                onResult(false)
             }
         }
     }

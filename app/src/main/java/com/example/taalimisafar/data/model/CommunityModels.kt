@@ -26,8 +26,6 @@ data class CommunityAnswer(
     @SerializedName("is_admin") val isAdmin: Boolean = false,
     @SerializedName("created_at") val createdAt: String? = null
 )
-
-// --- DATA GOING TO BACKEND ---
 data class SubmitQuestionRequest(
     @SerializedName("submission_type") val target: String,
     @SerializedName("category") val categoryId: Int, // ✅ Must be Int for Django ForeignKey
