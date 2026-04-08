@@ -104,11 +104,25 @@ fun MainScreen(
             composable(BottomNavItem.Profile.route) {
                 val isAuthenticated by authViewModel.isAuthenticated
                 if (isAuthenticated) {
-                    com.example.taalimisafar.ui.auth.ProfileScreen(viewModel = authViewModel, navController = rootNavController, onNavigateToLogin = { authViewModel.logout() })
+                    com.example.taalimisafar.ui.auth.ProfileScreen(
+                        viewModel = authViewModel,
+                        navController = rootNavController,
+                        onNavigateToLogin = { authViewModel.logout() },
+                        // 🔥 THE TWO LINES THAT FIX THE RED ERRORS:
+                        onAboutUsClick = { rootNavController.navigate("about_us") },
+                        onFeedbackClick = { rootNavController.navigate("feedback") }
+                    )
                 } else {
-                    com.example.taalimisafar.ui.auth.LoginScreen(viewModel = authViewModel, navController = rootNavController, onNavigateToSignup = { rootNavController.navigate("signup") }, onNavigateBack = {
-                        bottomNavController.navigate(BottomNavItem.Home.route) { popUpTo(bottomNavController.graph.findStartDestination().id); launchSingleTop = true }
-                    })
+                    com.example.taalimisafar.ui.auth.LoginScreen(
+                        viewModel = authViewModel,
+                        navController = rootNavController,
+                        onNavigateToSignup = { rootNavController.navigate("signup") },
+                        onNavigateBack = {
+                            bottomNavController.navigate(BottomNavItem.Home.route) {
+                                popUpTo(bottomNavController.graph.findStartDestination().id); launchSingleTop = true
+                            }
+                        }
+                    )
                 }
             }
         }

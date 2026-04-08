@@ -1,5 +1,7 @@
 package com.example.taalimisafar.ui.Navigation
 
+import AboutUsScreen
+import FeedbackScreen
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
@@ -96,6 +98,7 @@ import com.example.taalimisafar.viewmodel.ImportantDatesViewModel
 import com.example.taalimisafar.viewmodel.AuthViewModel
 import com.example.taalimisafar.viewmodel.CommunityViewModel
 import com.example.taalimisafar.viewmodel.EducationViewModel
+import com.example.taalimisafar.viewmodel.CoreViewModel
 
 @Composable
 fun NavGraph(
@@ -139,6 +142,10 @@ fun NavGraph(
     val authViewModel: AuthViewModel = viewModel(factory = sharedFactory)
     val communityViewModel: CommunityViewModel = viewModel(factory = sharedFactory)
     val educationViewModel: EducationViewModel = viewModel(factory = sharedFactory)
+
+    // 🔥 ADDED THIS LINE: Creates your com.example.taalimisafar.viewmodel.CoreViewModel so the NavGraph knows what it is!
+    val coreViewModel: CoreViewModel = viewModel(factory = sharedFactory)
+
     NavHost(
         navController = navController,
         startDestination = "splash_screen"
@@ -167,7 +174,7 @@ fun NavGraph(
             }
             LoginScreen(
                 viewModel = authViewModel,
-                navController = navController, // 🔥 ADDED: Powers the Bottom Navigation in Login
+                navController = navController,
                 onNavigateToSignup = { navController.navigate("signup") },
                 onNavigateBack = { navController.popBackStack() }
             )
@@ -191,18 +198,34 @@ fun NavGraph(
                     navController.navigate("login") { popUpTo("profile") { inclusive = true } }
                 }
             }
+
             ProfileScreen(
                 viewModel = authViewModel,
-                navController = navController, // 🔥 ADDED: Powers the Bottom Navigation & Edit Button
+                navController = navController,
                 onNavigateToLogin = {
                     navController.navigate("login") {
                         popUpTo("home_screen") { inclusive = false }
                     }
-                }
+                },
+                onAboutUsClick = { navController.navigate("about_us") },
+                onFeedbackClick = { navController.navigate("feedback") }
             )
         }
 
-        // 🔥 NEW ROUTE: Edit Profile Form
+        composable("about_us") {
+            AboutUsScreen(
+                viewModel = coreViewModel,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("feedback") {
+            FeedbackScreen(
+                viewModel = coreViewModel,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
         composable("edit_profile") {
             EditProfileScreen(
                 navController = navController,
@@ -224,7 +247,7 @@ fun NavGraph(
 
         composable(
             route = "communityDetail/{questionId}",
-            arguments = listOf(navArgument("questionId") { type = NavType.IntType }) // 🔥 FIXED: Uses IntType
+            arguments = listOf(navArgument("questionId") { type = NavType.IntType })
         ) { backStackEntry ->
             val questionId = backStackEntry.arguments?.getInt("questionId") ?: 0
             CommunityDetailScreen(

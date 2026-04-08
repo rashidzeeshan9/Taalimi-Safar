@@ -1,5 +1,7 @@
 package com.example.taalimisafar.data.remote
 
+import AboutUsResponse
+import FeedbackRequest
 import com.example.taalimisafar.data.model.AuthResponse
 import com.example.taalimisafar.data.model.Quote
 import com.example.taalimisafar.data.model.Course
@@ -29,8 +31,6 @@ import com.example.taalimisafar.data.model.CommunityQuestion
 import com.example.taalimisafar.data.model.EducationBoard
 import com.example.taalimisafar.data.model.SubmitQuestionRequest
 import com.example.taalimisafar.data.model.VoteRequest
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Retrofit
 import retrofit2.Response
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -68,6 +68,7 @@ interface ApiService {
         @Query("stipend_amount__gte") minStipend: Int? = null,
         @Query("ppo_opportunity") ppo: Boolean? = null
     ): List<Internship>
+
     @GET("api/jobs/")
     suspend fun getJobsByCategory(
         @Query("category") categoryId: Int? = null,
@@ -77,7 +78,6 @@ interface ApiService {
         @Query("is_remote") isRemote: Boolean? = null,
         @Query("experience_required") experience: String? = null
     ): List<Job>
-
 
     @GET("api/skill-programs/")
     suspend fun getSkillPrograms(
@@ -99,7 +99,6 @@ interface ApiService {
         @Path("id") programId: Int
     ): ReligiousProgram
 
-
     @GET("api/diploma-programs/")
     suspend fun getDiplomaPrograms(
         @Query("category") categoryId: Int
@@ -109,7 +108,6 @@ interface ApiService {
     suspend fun getDiplomaProgramDetail(
         @Path("id") programId: Int
     ): DiplomaProgram
-
 
     @GET("api/scheme-categories")
     suspend fun getSchemeCategories(): List<SchemesCategory>
@@ -124,33 +122,31 @@ interface ApiService {
     suspend fun getSchemeDetail(
         @Path("id") id: Int
     ): Schemes
+
     // ----------------------------
-// STREAMS
-// ----------------------------
+    // STREAMS
+    // ----------------------------
 
     @GET("api/streams/")
     suspend fun getStreams(): List<Stream>
 
-
-// ----------------------------
-// COURSES BY STREAM
-// ----------------------------
+    // ----------------------------
+    // COURSES BY STREAM
+    // ----------------------------
 
     @GET("api/courses/")
     suspend fun getCourses(
         @Query("stream") streamId: Int
     ): List<Course>
 
-
-// ----------------------------
-// COURSE DETAIL
-// ----------------------------
+    // ----------------------------
+    // COURSE DETAIL
+    // ----------------------------
 
     @GET("api/courses/{id}/")
     suspend fun getCourseDetail(
         @Path("id") courseId: Int
     ): Course
-
 
     // === INDUSTRY & CAREER ENDPOINTS ===
     @GET("api/industry-categories/")
@@ -183,7 +179,6 @@ interface ApiService {
 
     // Important date
     @GET("api/important-programs/")
-
     suspend fun getImportantPrograms(
         @Query("category") categoryId: Int? = null
     ): List<ImportantProgram>
@@ -198,7 +193,9 @@ interface ApiService {
         @Query("timeframe") timeframe: String?= null
     ): List<ImportantDate>
 
-    // Authentication
+    // ==========================================
+    // 🔥 AUTHENTICATION ENDPOINTS (REVERTED)
+    // ==========================================
     @POST("api/user/signup/")
     suspend fun registerUser(@Body request: RegisterRequest)
 
@@ -212,6 +209,7 @@ interface ApiService {
     suspend fun logoutUser(
         @Body body: Map<String, String>
     )
+
     @GET("api/user/profile/")
     suspend fun getMyProfile(): UserProfile
 
@@ -223,7 +221,9 @@ interface ApiService {
     @POST("api/user/resend-otp/")
     suspend fun resendOtp(@Body request: Map<String, String>): Response<ResponseBody>
 
-    // community part
+    // ==========================================
+    // COMMUNITY PART
+    // ==========================================
     @GET("api/community/feed/")
     suspend fun getCommunityFeed(): List<CommunityQuestion>
 
@@ -247,12 +247,24 @@ interface ApiService {
         @Body body: Map<String, String>
     )
 
-    // Education and School
-
-    @GET("api/education/boards/") // Adjust to your actual Django URL
+    // ==========================================
+    // EDUCATION AND SCHOOL
+    // ==========================================
+    @GET("api/education/boards/")
     suspend fun getEducationBoards(): Response<List<EducationBoard>>
 
     @GET("api/education/boards/{id}/")
     suspend fun getBoardDetail(@Path("id") boardId: Int): Response<EducationBoard>
 
+    // ==========================================
+    // CORE APP ENDPOINTS (About Us & Feedback)
+    // ==========================================
+    @GET("core/about/")
+    suspend fun getAboutUs(): retrofit2.Response<AboutUsResponse>
+
+    @POST("core/feedback/")
+    suspend fun submitFeedback(
+        @Header("Authorization") token: String,
+        @Body request: FeedbackRequest
+    ): retrofit2.Response<Unit>
 }

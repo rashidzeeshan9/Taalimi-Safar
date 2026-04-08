@@ -36,7 +36,9 @@ import com.example.taalimisafar.viewmodel.AuthViewModel
 fun ProfileScreen(
     viewModel: AuthViewModel,
     navController: NavController,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onAboutUsClick: () -> Unit,
+    onFeedbackClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -158,7 +160,7 @@ fun ProfileScreen(
                         icon = Icons.Default.Info,
                         title = "About Us",
                         iconTint = MaterialTheme.colorScheme.primary
-                    ) { }
+                    ) { onAboutUsClick() }
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
 
@@ -166,7 +168,7 @@ fun ProfileScreen(
                         icon = Icons.Default.Feedback,
                         title = "Feedback",
                         iconTint = MaterialTheme.colorScheme.primary
-                    ) { }
+                    ) { onFeedbackClick() }
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
 
